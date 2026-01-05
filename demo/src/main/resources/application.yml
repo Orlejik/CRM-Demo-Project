@@ -1,0 +1,35 @@
+spring:
+  freemarker:
+    suffix: .ftlh
+    expose-request-attributes: true
+  sql:
+    init:
+      platform: postgres
+  datasource:
+    generate-unique-name: false
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/main_db
+    username: artiom
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format-sql: true
+      show-sql: true
+    main:
+      web-development-type: servlet
+  application:
+    name: crm-demo
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+server:
+  port: 8080
+logging:
+  level:
+    org.thymeleaf: DEBUG
