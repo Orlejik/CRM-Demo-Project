@@ -22,9 +22,9 @@ public class Logs {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    CrmUser user;
+    Customer user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "project_id", nullable = false)

@@ -1,28 +1,64 @@
+#spring:
+#  freemarker:
+#    suffix: .ftlh
+#    expose-request-attributes: true
+#  sql:
+#    init:
+#      platform: postgres
+#  datasource:
+#    generate-unique-name: false
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/main_db
+#    username: artiom
+#    password: admin
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format-sql: true
+#      show-sql: true
+#    main:
+#      web-development-type: servlet
+#      application:
+#    name: crm-demo
+#  thymeleaf:
+#    cache: false
+#    prefix: classpath:/templates/
+#    suffix: .html
+#    mode: HTML
+#server:
+#  port: 8080
+#logging:
+#  level:
+#    org.thymeleaf: DEBUG
+
 spring:
-  freemarker:
-    suffix: .ftlh
-    expose-request-attributes: true
-  sql:
-    init:
-      platform: postgres
   datasource:
     generate-unique-name: false
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/main_db
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/main_db
+#    username: artiom
+#    password: admin
+    url: jdbc:mysql://localhost:3306/my_database
     username: artiom
     password: admin
+    driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format-sql: true
       show-sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL5Dialect
     main:
       web-development-type: servlet
-  application:
+      application:
     name: crm-demo
+  freemarker:
+    suffix: .ftlh
+    expose-request-attributes: true
   thymeleaf:
     cache: false
     prefix: classpath:/templates/

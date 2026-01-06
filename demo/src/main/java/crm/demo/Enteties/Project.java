@@ -2,6 +2,7 @@ package crm.demo.Enteties;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,4 +36,8 @@ public class Project {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "crmUser_id", nullable = false)
+    List<ProjectMessages> messagesList;
 }

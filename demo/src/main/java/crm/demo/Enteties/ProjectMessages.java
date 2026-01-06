@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Setter
 @Entity
-@Table(name = "ProjectMessages")
+@Table(name = "project_messages")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectMessages {
@@ -22,10 +22,17 @@ public class ProjectMessages {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "crmUser_id", nullable = false)
-    List<CrmUser> user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    Customer customersMessages;
 
     @Column(name = "message_content")
     String messageContent;
+
+    @Column(name = "message_author")
+    String author;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    Project projectsMessages;
 }

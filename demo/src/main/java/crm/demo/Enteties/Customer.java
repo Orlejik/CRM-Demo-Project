@@ -23,11 +23,17 @@ public class Customer {
     @NotBlank
     String nickName;
 
-    @ManyToOne
-    @JoinColumn(name = "project_id")
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     List<Project> project;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
-    @JoinColumn(name="log_id")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     List<Logs> userLogs;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    List<ProjectMessages> messagesList;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "crmUser_id", referencedColumnName = "id")
+    CrmUser crmUser;
+
 }
