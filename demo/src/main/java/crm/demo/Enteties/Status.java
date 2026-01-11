@@ -22,9 +22,13 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column
-    String status;
+    @Column(unique = true,  nullable = false)
+    String code;
 
-    @OneToMany
+    @Column
+    String displayName;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_status")
     List<Project> project;
 }

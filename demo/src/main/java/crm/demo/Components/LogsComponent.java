@@ -3,13 +3,11 @@ package crm.demo.Components;
 import crm.demo.Enteties.Logs;
 import crm.demo.Repositories.LogsRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController("/api/")
 @RequiredArgsConstructor
 public class LogsComponent {

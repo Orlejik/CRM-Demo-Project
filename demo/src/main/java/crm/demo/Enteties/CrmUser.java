@@ -60,8 +60,8 @@ public class CrmUser {
     @Column(unique = true)
     String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     Customer customer;
     
 }

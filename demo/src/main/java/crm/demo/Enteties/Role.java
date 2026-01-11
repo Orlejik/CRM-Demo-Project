@@ -22,8 +22,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "crmUser_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crmUser_id")
     CrmUser crmUser;
 
     @Column(name="Role_Name")
