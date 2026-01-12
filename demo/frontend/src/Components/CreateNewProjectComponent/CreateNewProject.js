@@ -20,7 +20,7 @@ export default function CreateNewProject(props){
         projectName: "",
         deadLine: "",
         projectDescription: "",
-        customerId: 0
+        ownerId: null
     })
 
     const handleChanges = (e)=>{
@@ -82,7 +82,7 @@ export default function CreateNewProject(props){
                             </div>
                             <div className="labelsInputs">
                                 <label htmlFor="customerId">Assign to </label>
-                                <select title="assignTo" required id="customerId" name="customerId" value={formData.customerId} onChange={handleChanges} >
+                                <select title="assignTo" required id="customerId" name="ownerId" value={formData.customerId} onChange={handleChanges} >
                                     <option value=""> select name</option>
                                     {
                                         customers.map(customer=>{

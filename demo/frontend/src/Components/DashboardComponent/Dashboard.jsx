@@ -14,7 +14,7 @@ export default function Dashboard(props) {
                 console.log("RAW RESPONSE:", res);
                 console.log("DATA:", res.data);
                 console.log("IS ARRAY:", Array.isArray(res.data));
-                setProject(res.data.content);
+                setProject(res.data);
             })
             .catch(err => console.error("API ERROR:",err))
     }, []);
@@ -36,7 +36,7 @@ export default function Dashboard(props) {
                         </tr>
                         </thead>
                         <tbody>
-                        {/* {projects.length === 0 ? (
+                        {projects.length === 0 ? (
                                 <tr className={"messageRow"}>
                                     <td colSpan={5}>
                                         <NoDataMessage message= "No available projects or you dont have access to view.." />
@@ -53,17 +53,17 @@ export default function Dashboard(props) {
                                             {project.projectName}
                                             </a>
                                         </td>
-                                        <td>{project.status}</td>
+                                        <td>{project.status.displayName}</td>
                                         <td>{project.createdOn}</td>
-                                        <td>{project.owner}</td>
+                                        <td>{project.creatorName}</td>
                                         <td>{project.deadLine}</td>
                                     </tr>
                                 )
                                 
                             })
-                        )} */}
+                        )}
 
-                        {Array.isArray(projects) && projects.length === 0 && (
+                        {/* {Array.isArray(projects) && projects.length === 0 && (
                             <tr className="messageRow">
                                 <td colSpan={5}>
                                     <NoDataMessage message="No available projects or you dont have access to view.." />
@@ -83,7 +83,7 @@ export default function Dashboard(props) {
                                 <td>{project.owner}</td>
                                 <td>{project.deadLine}</td>
                             </tr>
-                            ))}
+                            ))} */}
                         </tbody>
                     </table>
                 </div>
