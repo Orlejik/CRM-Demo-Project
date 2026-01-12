@@ -1,13 +1,13 @@
 package crm.demo.Enums;
 
 public enum StatusEnum {
-    NEW,
+    NEW, //y
     OPEN,
-    CLOSED,
-    DELAYED,
-    ON_HOLD,
-    IN_PROGRESS,
-    COMPLETED,
+    CLOSED, //y
+    DELAYED, //y
+    POSTPONED, //y
+    IN_PROGRESS,//y
+    COMPLETED, //y
     ON_REVIEW,
     REVIEWED
 }

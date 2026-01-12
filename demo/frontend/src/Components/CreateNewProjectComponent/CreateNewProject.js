@@ -1,11 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {Component, useEffect, useState} from "react";
 import PageName from "../Pagename/PageName";
 import axios from "axios";
 import "./CreateNewProject.css"
+import { useNavigate } from "react-router-dom";
+
 
 export default function CreateNewProject(props){
 
     const[customers, setCustomers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get("http://localhost:8080/api/customers")
@@ -13,47 +16,44 @@ export default function CreateNewProject(props){
             .catch(err => console.error(err));
     }, []);
 
-
-    const currentDate = new Date().toLocaleString('sv-SE');
-
     const[formData, setFormData]=useState({
         projectName: "",
         deadLine: "",
         projectDescription: "",
-        createdOn: currentDate,
-        owner: "artiom",
-        creatorName: "Artiom",
-        status: "NEW",
-        // messageList: {
-        //     customersMessages: 1,
-        //     messageContent: "New Project Created!",
-        //     author: "artiom"
-        // }
+        customerId: 0
     })
 
     const handleChanges = (e)=>{
-      let projectName= e.target.name;
-      let deadLine= e.target.name;
-      let projectDescription= e.target.name;
-      let createdOn= currentDate;
-      let owner=  "artiom";
-      let creatorName="Artiom Oriol";
-      let status =  "NEW";
+
+        const{name, value}=e.target;
+
+        setFormData(prev=>({
+            ...prev,
+            [name]: value
+        }))
+
+        console.log(e.target.value)
     };
 
     let onSubmitnewProject = (e) =>{
+        e.preventDefault();
         console.log(formData);
+        console.log(customers[0]);
     }
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
-
+        console.log(formData);
+        console.log(customers[0]);
         try{
+             
+            console.log(formData.createdOn)
             const response = await axios.post(
                 "http://localhost:8080/api/project-add",
                 formData
             )
-            console.log(response.data);
+            navigate("/dashboard")
+           console.log(response.data);
         }catch (error){
             console.log(error)
         }
@@ -68,26 +68,25 @@ export default function CreateNewProject(props){
 
             <div>
                 <form onSubmit={handleSubmit}>
-                {/*<form onSubmit={onSubmitnewProject}>*/}
+                {/* <form onSubmit={onSubmitnewProject}> */}
                     <div className="formContainer">
                         <div className="labelsInputsBlock inputsFirstRow">
                             <div className="labelsInputs">
                                 <label htmlFor="projectName"> Project Name</label>
-                                <input id="projectName" type="text" onChange={handleChanges}/>
+                                <input id="projectName" required name="projectName" value={formData.projectName} type="text" onChange={handleChanges}/>
                             </div>
 
                             <div className="labelsInputs">
                                 <label htmlFor="deadLine">Dead Line</label>
-                                <input id="deadLine" onChange={handleChanges} type="date"/>
+                                <input id="deadLine" required name="deadLine" value={formData.deadLine} onChange={handleChanges} type="date"/>
                             </div>
                             <div className="labelsInputs">
-                                <label htmlFor="assignTo">Assign to </label>
-                                <select id="assignTo"  onChange={handleChanges} >
+                                <label htmlFor="customerId">Assign to </label>
+                                <select title="assignTo" required id="customerId" name="customerId" value={formData.customerId} onChange={handleChanges} >
                                     <option value=""> select name</option>
-                                    <option value="value1"> value 1</option>
                                     {
                                         customers.map(customer=>{
-                                            <option key={customer.id} value={customer.id}> {customer.nickName}</option>
+                                            return(<option key={customer.id} value={parseInt(customer.id)}> {customer.nickName}</option>)
                                         })
                                     }
                                 </select>
@@ -98,7 +97,7 @@ export default function CreateNewProject(props){
                         <div className=" inputsSecondRow">
                             <div className="labelsInputs">
                                 <label htmlFor="projectDescription">Description</label>
-                                <textarea onChange={handleChanges}  id="projectDescription"/>
+                                <textarea name="projectDescription" required value={formData.projectDescription} onChange={handleChanges} id="projectDescription"/>
                             </div>
                         </div>
                     </div>

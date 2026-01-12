@@ -1,9 +1,11 @@
 package crm.demo.Enteties;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,16 +32,18 @@ public class Project {
     String projectName;
 
     @Column
-    LocalDateTime deadLine;
+    @JsonFormat(pattern = "MM-dd-yyyy")
+    LocalDate deadLine;
 
     @Column
     String projectDescription;
 
     @Column
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime createdOn;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate createdOn;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     Customer owner;
 
     @Column

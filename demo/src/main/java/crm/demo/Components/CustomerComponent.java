@@ -3,6 +3,9 @@ package crm.demo.Components;
 import java.security.Principal;
 import java.util.List;
 
+import crm.demo.DTOs.CustomerCreateRequest;
+import crm.demo.Enteties.CrmUser;
+import crm.demo.Repositories.CrmUserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import crm.demo.Enteties.Customer;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerComponent {
 
     private final CustomerRepository customerRepository;
+    private final CrmUserRepository crmUserRepository;
     
     @GetMapping("customers")
     public List<Customer> customers(){
@@ -28,7 +32,13 @@ public class CustomerComponent {
     }
 
     @PostMapping("/customer/add")
-    public Customer postMethodName(@RequestBody Customer newCustomer) {
+    public Customer postMethodName(@RequestBody CustomerCreateRequest customerReq) {
+        CrmUser user = crmUserRepository.findById(customerReq.getCrmUserId())
+                .orElseThrow(()-> new RuntimeException("no such ID"));
+
+        Customer newCustomer = new Customer();
+        newCustomer.setNickName(customerReq.getNickName());
+        newCustomer.setCrmUser(user);
         return customerRepository.save(newCustomer);
     }
 

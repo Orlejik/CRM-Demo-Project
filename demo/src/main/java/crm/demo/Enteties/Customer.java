@@ -1,5 +1,6 @@
 package crm.demo.Enteties;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -24,6 +25,7 @@ public class Customer {
     String nickName;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @JsonManagedReference
     List<Project> project;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -32,8 +34,8 @@ public class Customer {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     List<ProjectMessages> messagesList;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "crmUser_id", referencedColumnName = "id")
+    @OneToOne()
+    @JoinColumn(name = "crmUser_id")
     CrmUser crmUser;
 
 }

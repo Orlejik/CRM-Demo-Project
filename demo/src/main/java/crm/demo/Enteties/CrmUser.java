@@ -32,12 +32,11 @@ public class CrmUser {
     @Column
     String password;
 
-    @OneToMany(
+    @OneToOne(
             fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
             mappedBy = "crmUser",
             orphanRemoval = true)
-    List<Role> role;
+    Role role;
 
     @Column
     Boolean isActive;
