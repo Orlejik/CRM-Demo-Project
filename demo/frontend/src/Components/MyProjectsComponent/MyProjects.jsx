@@ -1,7 +1,7 @@
 import * as React from "react";
 import PageName from "../Pagename/PageName";
 import "./MyProjectsComponent.css"
-import {NavLink, Link, Routes, Route, BrowserRouter} from "react-router-dom";
+import {Link} from "react-router-dom";
 import NoDataMessage from "../Messages/NoDataMessage";
 import {useEffect, useState} from "react";
 import axios from "axios";
@@ -45,19 +45,20 @@ export default function MyProjects(props) {
                             </tr>
 
                         ) : (
-                            projects.map(project => {
-                                <tr key={project.id}>
-                                    <td>
-                                        <a href={`http://localhost:8080/api/project/${project.id}`}>
-                                            {project.projectName}
-                                        </a>
-                                    </td>
-                                    <td>{project.status}</td>
-                                    <td>{project.createdOn}</td>
-                                    <td>{project.owner}</td>
-                                    <td>{project.deadLine}</td>
-                                </tr>
-                            })
+                            projects.map(project => {return(
+                                    <tr key={project.id}>
+                                        <td>
+                                            <a href={`http://localhost:8080/api/project/${project.id}`}>
+                                                {project.projectName}
+                                            </a>
+                                        </td>
+                                        <td>{project.status}</td>
+                                        <td>{project.createdOn}</td>
+                                        <td>{project.owner}</td>
+                                        <td>{project.deadLine}</td>
+                                    </tr>
+                                ) }
+                            )
                         )}
                         </tbody>
                     </table>

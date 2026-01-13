@@ -3,8 +3,6 @@ import classNames from "classnames";
 
 export default class LoginRegisterForm extends React.Component {
 
-
-
     constructor(props) {
         super(props);
         this.state = {
@@ -15,9 +13,8 @@ export default class LoginRegisterForm extends React.Component {
             login: "",
             email:"",
             password: "",
-            rolle: "",
-            onLogin: props.onLogin,
-            onRegister: props.onRegister,
+            role: "",
+            errorMessage: null
         };
     }
 
@@ -27,21 +24,41 @@ export default class LoginRegisterForm extends React.Component {
         this.setState({[name]: value});
     }
 
-    onSubmitLogin = (e) => {
-        this.state.onLogin(e, this.state.login, this.state.password);
-    };
+    onSubmitLogin = async (e) => {
+    e.preventDefault();
 
-    onSubmitRegister = (e) => {
-        this.props.onRegister(
-            e,
+    try {
+        await this.props.onLogin(
+            this.state.login,
+            this.state.password
+        );
+    } catch (err) {
+        this.setState({
+            errorMessage: err.message 
+        });
+    }
+};
 
+    onSubmitRegister = async (e) => {
+        e.preventDefault();
+    try {
+        await this.props.onRegister(
             this.state.firstName,
             this.state.lastName,
             this.state.login,
             this.state.email,
             this.state.password,
-            this.state.rolle,);
+            this.state.role
+        );
+
+    } catch (error) {
+        this.setState({
+            errorMessage: error.response?.data?.message
+                || JSON.stringify(err.response?.data)
+                || "Registration failed"
+        });
     }
+};
 
 
     render() {
@@ -119,6 +136,12 @@ export default class LoginRegisterForm extends React.Component {
 
                     </div>
                 </div>
+
+                {this.state.errorMessage && (
+                    <div className="alert alert-danger">
+                        {this.state.errorMessage}
+                    </div>
+                )}
 
             </div>
         )

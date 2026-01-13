@@ -53,37 +53,15 @@ export default function Dashboard(props) {
                                             {project.projectName}
                                             </a>
                                         </td>
-                                        <td>{project.status.displayName}</td>
                                         <td>{project.createdOn}</td>
-                                        <td>{project.creatorName}</td>
                                         <td>{project.deadLine}</td>
+                                        <td>{project.creatorName}</td>
+                                        <td>{project.status.displayName}</td>
                                     </tr>
                                 )
                                 
                             })
                         )}
-
-                        {/* {Array.isArray(projects) && projects.length === 0 && (
-                            <tr className="messageRow">
-                                <td colSpan={5}>
-                                    <NoDataMessage message="No available projects or you dont have access to view.." />
-                                </td>
-                            </tr>
-                            )}
-
-                        {Array.isArray(projects) && projects.map(project =>  (
-                            <tr key={project.id}>
-                                <td>
-                                <a href={`http://localhost:8080/api/projects/${project.id}`}>
-                                    {project.name}
-                                </a>
-                                </td>
-                                <td>{project.status}</td>
-                                <td>{project.createdOn}</td>
-                                <td>{project.owner}</td>
-                                <td>{project.deadLine}</td>
-                            </tr>
-                            ))} */}
                         </tbody>
                     </table>
                 </div>
