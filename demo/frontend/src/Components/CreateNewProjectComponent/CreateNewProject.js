@@ -34,13 +34,6 @@ export default function CreateNewProject(props){
 
         console.log(e.target.value)
     };
-
-    // let onSubmitnewProject = (e) =>{
-    //     e.preventDefault();
-    //     console.log(formData);
-    //     console.log(customers[0]);
-    // }
-
     const handleSubmit = async (e) =>{
         e.preventDefault();
         console.log(formData);

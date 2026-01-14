@@ -1,149 +1,103 @@
-import * as React from "react";
+import {useState} from "react";
 import classNames from "classnames";
+import { useAuth } from "../../Security/AuthContext";
+import { request } from "../../Components/Helpers/AxiosHelper/AxiosHelper";
 
-export default class LoginRegisterForm extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            active: "login",
-
-            firstName: "",
-            lastName: "",
-            login: "",
-            email:"",
-            password: "",
-            role: "",
-            errorMessage: null
-        };
-    }
-
-    onChangeHandler = (event) => {
-        let name = event.target.name;
-        let value = event.target.value;
-        this.setState({[name]: value});
-    }
-
-    onSubmitLogin = async (e) => {
-    e.preventDefault();
-
-    try {
-        await this.props.onLogin(
-            this.state.login,
-            this.state.password
-        );
-    } catch (err) {
-        this.setState({
-            errorMessage: err.message 
+export default function LoginRegisterForm() {
+    const{login} = useAuth();
+    const [active, setActive] = useState("login");
+    const[form, setForm] = useState({
+        firstName:"",
+        lastName: "",
+        login: "",
+        email:"",
+        password: ""
+    });
+    const[errorMessage, setErrorMessage] = useState(null);
+    const onChangeHandler = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
         });
-    }
-};
-
-    onSubmitRegister = async (e) => {
+    };
+    const onSubmitLogin = async (e) => {
         e.preventDefault();
-    try {
-        await this.props.onRegister(
-            this.state.firstName,
-            this.state.lastName,
-            this.state.login,
-            this.state.email,
-            this.state.password,
-            this.state.role
-        );
+        setErrorMessage(null);
+        try{
+            const response = await request("POST", "/auth/login", form);
+            if (!response?.data?.token) {
+                throw new Error("No token in response");
+}
+            login(response.data.token)
+        }catch(err){
+            setErrorMessage(
+                setErrorMessage(
+                err.response?.data?.message ||
+                JSON.stringify(err.response?.data) 
+                || "Login Failed"
+            )
+            );
+        }
+    };
+    const onSubmitRegister = async (e) => {
+        e.preventDefault();
+        setErrorMessage(null);
 
-    } catch (error) {
-        this.setState({
-            errorMessage: error.response?.data?.message
-                || JSON.stringify(err.response?.data)
-                || "Registration failed"
-        });
-    }
-};
-
-
-    render() {
+        try{
+            const response = await request("POST", "/auth/register", form);
+            login(response.data.token)
+        }catch(err){
+            setErrorMessage(
+                err.response?.data?.message ||
+                JSON.stringify(err.response?.data) 
+                || "Registration Failed"
+            )
+        }
+    };
         return (
-            <div className="row justify-content-center ">
-                <div className="col-4">
-                    <ul className="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
-                        <li className="nav-item" role="presentation">
-                            <button id="tab-login"
-                                    onClick={() => this.setState({active: "login"})}
-                                    className={classNames("nav-link", this.state.active === "login" ? "active" : "")}>login
-                            </button>
-                        </li>
-                        <li className="nav-item" role="presentation">
-                            <button id="tab-register"
-                                    onClick={() => this.setState({active: "register"})}
-                                    className={classNames("nav-link", this.state.active === "register" ? "active" : "")}>register
-                            </button>
-                        </li>
-                    </ul>
-
-                    <div className="tab-content">
-                        <div
-                            className={classNames("tab-pane", "fade", this.state.active === "login" ? "show active" : "")}
-                            id="pills-login">
-                            <form onSubmit={this.onSubmitLogin}>
-                                <div className="form-outline mb-4">
-                                    <input type="login" id="loginLoginName" name="login" className="form-control" onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="loginLoginName"> Username</label>
-                                </div>
-                                <div className="form-outline mb-4">
-                                    <input type="password" id="userLoginPassword" name="password" className="form-control" onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="userLoginPassword"> Password</label>
-                                </div>
-                                <div>
-                                    <button className="btn btn-primary btn-block mb-4" type="submit"> Login</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div
-                            className={classNames("tab-pane", "fade", this.state.active === "register" ? "show active" : "")}
-                            id="pills-register">
-                            <form onSubmit={this.onSubmitRegister}>
-                                <div className="form-outline mb-4">
-                                    <input type="text" id="firstname" name="firstName" className="form-control"
-                                           onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="firstname"> Firstname</label>
-                                </div>
-                                <div className="form-outline mb-4">
-                                    <input type="text" id="lastname" name="lastName" className="form-control"
-                                           onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="lastname"> Lastname</label>
-                                </div>
-                                <div className="form-outline mb-4">
-                                    <input type="login" id="loginRegisterName" name="login" className="form-control"
-                                           onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="loginRegisterName"> Username</label>
-                                </div>
-                                <div className="form-outline mb-4">
-                                    <input type="email" id="userEmail" name="email" className="form-control"
-                                           onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="userEmail"> E-Mail</label>
-                                </div>
-                                <div className="form-outline mb-4">
-                                    <input type="password" id="userRegisterPassword" name="password" className="form-control"
-                                           onChange={this.onChangeHandler}/>
-                                    <label className="form-label" htmlFor="userRegisterPassword"> Password</label>
-                                </div>
-                                <div>
-                                    <button className="btn btn-primary btn-block mb-4" type="submit"> Register</button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-
-                {this.state.errorMessage && (
-                    <div className="alert alert-danger">
-                        {this.state.errorMessage}
+            <div className="row justify-content-center">
+            <div className="col-4">
+                <ul className="nav nav-pills nav-justified mb-3">
+                    <li className="nav-item">
+                        <button
+                            className={classNames("nav-link", active === "login" && "active")}
+                            onClick={() => setActive("login")}
+                        >
+                            Login
+                        </button>
+                    </li>
+                    <li className="nav-item">
+                        <button
+                            className={classNames("nav-link", active === "register" && "active")}
+                            onClick={() => setActive("register")}
+                        >
+                            Register
+                        </button>
+                    </li>
+                </ul>
+                {active === "login" && (
+                    <form onSubmit={onSubmitLogin}>
+                        <input name="login" placeholder="Username" className="form-control mb-2" onChange={onChangeHandler} />
+                        <input name="password" type="password" placeholder="Password" className="form-control mb-2" onChange={onChangeHandler} />
+                        <button className="btn btn-primary w-100">Login</button>
+                    </form>
+                )}
+                {active === "register" && (
+                    <form onSubmit={onSubmitRegister}>
+                        <input name="firstName" placeholder="First name" className="form-control mb-2" onChange={onChangeHandler} />
+                        <input name="lastName" placeholder="Last name" className="form-control mb-2" onChange={onChangeHandler} />
+                        <input name="login" placeholder="Username" className="form-control mb-2" onChange={onChangeHandler} />
+                        <input name="email" type="email" placeholder="Email" className="form-control mb-2" onChange={onChangeHandler} />
+                        <input name="password" type="password" placeholder="Password" className="form-control mb-2" onChange={onChangeHandler} />
+                        <button className="btn btn-success w-100">Register</button>
+                    </form>
+                )}
+                {errorMessage && (
+                    <div className="alert alert-danger mt-3">
+                        {errorMessage}
                     </div>
                 )}
-
             </div>
+        </div>
         )
-    }
 }

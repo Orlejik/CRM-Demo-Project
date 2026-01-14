@@ -6,11 +6,19 @@ import {Routes, Route, Navigate} from 'react-router-dom'
 import MyProjects from "../Components/MyProjectsComponent/MyProjects";
 import MySettings from "../Components/MySettingsComponent/MySettings";
 import CreateNewProject from "../Components/CreateNewProjectComponent/CreateNewProject";
-import LoginRegisterForm from "../Components/LoginRegisterComponent/LoginRegisterForm";
+import LoginRegisterForm from "../APP/LoginAndRegister/LoginRegisterForm";
 import ProtectedRoute from "../Security/ProtectedRoute";
 import { useAuth } from "../Security/AuthContext";
+import RoleRoute from "../Security/RoleRoute";
+import AdminPanel from "./../Components/AdminPanelComponent/AdminPanel"
+import { useEffect} from "react";
+import { setupAxiosInterceptors } from "./../Components/Helpers/AxiosHelper/setupAxiosInterceptors";
 
 function App() {
+    const { logout } = useAuth();
+    useEffect(() => {
+    setupAxiosInterceptors(logout);
+}, []);
   return (
     <div className="App">
         <Header pageTitle="Front End  Authentication with JWT" />
@@ -26,7 +34,10 @@ function App() {
                         <Route path="/my-projects" element={<MyProjects />} />
                         <Route path="/my-settings" element={<MySettings />} />
                         <Route path="/create-new-project" element={<CreateNewProject />} />
-                        <Route path="/login-register" element={< LoginRegisterForm/>} />
+
+                        <Route element={<RoleRoute allowedRoles={["ADMIN"]} />}>
+                          <Route path="/admin" element={<AdminPanel message="Admin"/>} />
+                        </Route>
                     </Route>
                 </Routes>
             </div>
