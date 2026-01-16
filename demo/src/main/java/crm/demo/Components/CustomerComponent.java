@@ -14,7 +14,7 @@ import crm.demo.Enteties.Customer;
 import crm.demo.Repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/")

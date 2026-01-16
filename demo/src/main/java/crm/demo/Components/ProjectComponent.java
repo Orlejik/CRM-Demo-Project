@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
+//@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor

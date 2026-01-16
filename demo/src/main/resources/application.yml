@@ -23,6 +23,7 @@ spring:
     name: crm-demo
 server:
   port: 8080
+  forward-headers-strategy: framework
 logging:
   level:
     org.thymeleaf: DEBUG
