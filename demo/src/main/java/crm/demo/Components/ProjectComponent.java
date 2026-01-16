@@ -1,17 +1,16 @@
 package crm.demo.Components;
 
 import crm.demo.DTOs.ProjectCreationRequest;
+import crm.demo.DTOs.ProjectDTO;
 import crm.demo.DTOs.ProjectResponse;
 import crm.demo.Enteties.*;
-import crm.demo.Enums.StatusEnum;
 import crm.demo.Repositories.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -23,11 +22,16 @@ public class ProjectComponent {
     private final CustomerRepository customerRepository;
     private final StatusRepository statusRepository;
     private final LogsRepository logsRepository;
+    private final CrmUserRepository crmUserRepository;
 
 
     @GetMapping("projects")
-    public List<Project> listAllProjects(){
-        return projectRepository.findAll();
+    public List<ProjectDTO> listAllProjects(){
+
+        return  projectRepository.findAll()
+                .stream()
+                .map(ProjectDTO::from)
+                .toList();
     }
 
     @GetMapping("project/{id}")
@@ -78,6 +82,12 @@ public class ProjectComponent {
         System.out.println(projectResponse);
 
         return projectResponse;
+    }
+
+    @GetMapping("my/projects")
+    public List<Project> getProjectsByUser(Principal principal){
+
+        return projectRepository.findByOwnerNickName(principal.getName());
     }
 
     @PutMapping("project-update/{id}")

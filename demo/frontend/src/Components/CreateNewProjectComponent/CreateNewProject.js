@@ -9,9 +9,14 @@ export default function CreateNewProject(props){
 
     const[customers, setCustomers] = useState([]);
     const navigate = useNavigate();
+    const token = localStorage.getItem("token")
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/customers")
+        axios.get("http://localhost:8080/api/customers", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(res => setCustomers(res.data))
             .catch(err => console.error(err));
     }, []);

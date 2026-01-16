@@ -34,8 +34,7 @@ public class Customer {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     List<ProjectMessages> messagesList;
 
-    @OneToOne()
-    @JoinColumn(name = "crmUser_id")
+    @OneToOne(mappedBy = "customer")
     CrmUser crmUser;
 
 }

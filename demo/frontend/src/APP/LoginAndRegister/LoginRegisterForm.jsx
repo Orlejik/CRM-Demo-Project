@@ -56,48 +56,50 @@ export default function LoginRegisterForm() {
     };
         return (
             <div className="row justify-content-center">
-            <div className="col-4">
-                <ul className="nav nav-pills nav-justified mb-3">
-                    <li className="nav-item">
-                        <button
-                            className={classNames("nav-link", active === "login" && "active")}
-                            onClick={() => setActive("login")}
-                        >
-                            Login
-                        </button>
-                    </li>
-                    <li className="nav-item">
-                        <button
-                            className={classNames("nav-link", active === "register" && "active")}
-                            onClick={() => setActive("register")}
-                        >
-                            Register
-                        </button>
-                    </li>
-                </ul>
-                {active === "login" && (
-                    <form onSubmit={onSubmitLogin}>
-                        <input name="login" placeholder="Username" className="form-control mb-2" onChange={onChangeHandler} />
-                        <input name="password" type="password" placeholder="Password" className="form-control mb-2" onChange={onChangeHandler} />
-                        <button className="btn btn-primary w-100">Login</button>
-                    </form>
-                )}
-                {active === "register" && (
-                    <form onSubmit={onSubmitRegister}>
-                        <input name="firstName" placeholder="First name" className="form-control mb-2" onChange={onChangeHandler} />
-                        <input name="lastName" placeholder="Last name" className="form-control mb-2" onChange={onChangeHandler} />
-                        <input name="login" placeholder="Username" className="form-control mb-2" onChange={onChangeHandler} />
-                        <input name="email" type="email" placeholder="Email" className="form-control mb-2" onChange={onChangeHandler} />
-                        <input name="password" type="password" placeholder="Password" className="form-control mb-2" onChange={onChangeHandler} />
-                        <button className="btn btn-success w-100">Register</button>
-                    </form>
-                )}
-                {errorMessage && (
-                    <div className="alert alert-danger mt-3">
-                        {errorMessage}
+                <div className="col-4">
+                    <ul className="nav nav-pills nav-justified mb-3">
+                        <li className="nav-item">
+                            <button
+                                className={classNames("nav-link", active === "login" && "active")}
+                                onClick={() => setActive("login")}
+                            >
+                                Login
+                            </button>
+                        </li>
+                        <li className="nav-item">
+                            <button
+                                className={classNames("nav-link", active === "register" && "active")}
+                                onClick={() => setActive("register")}
+                            >
+                                Register
+                            </button>
+                        </li>
+                    </ul>
+                    {active === "login" && (
+                        <form onSubmit={onSubmitLogin}>
+                            <input name="login" placeholder="Username" className="form-control mb-2" onChange={onChangeHandler} />
+                            <input name="password" type="password" placeholder="Password" className="form-control mb-2" onChange={onChangeHandler} />
+                            <button className="btn btn-primary w-100">Login</button>
+                        </form>
+                    )}
+                    {active === "register" && (
+                        <form onSubmit={onSubmitRegister}>
+                            <input name="firstName" placeholder="First name" className="form-control mb-2" onChange={onChangeHandler} />
+                            <input name="lastName" placeholder="Last name" className="form-control mb-2" onChange={onChangeHandler} />
+                            <input name="login" placeholder="Username" className="form-control mb-2" onChange={onChangeHandler} />
+                            <input name="email" type="email" placeholder="Email" className="form-control mb-2" onChange={onChangeHandler} />
+                            <input name="password" type="password" placeholder="Password" className="form-control mb-2" onChange={onChangeHandler} />
+                            <button className="btn btn-success w-100">Register</button>
+                        </form>
+                    )}
+                    <div className="errorMessage">
+                           {errorMessage && (
+                        <div className="alert alert-danger mt-3">
+                            {errorMessage}
+                        </div>
+                    )}
                     </div>
-                )}
+                </div>
             </div>
-        </div>
         )
 }

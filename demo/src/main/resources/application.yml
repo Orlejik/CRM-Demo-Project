@@ -1,38 +1,3 @@
-#spring:
-#  freemarker:
-#    suffix: .ftlh
-#    expose-request-attributes: true
-#  sql:
-#    init:
-#      platform: postgres
-#  datasource:
-#    generate-unique-name: false
-#    driverClassName: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/main_db
-#    username: artiom
-#    password: admin
-#  jpa:
-#    hibernate:
-#      ddl-auto: create-drop
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
-#        format-sql: true
-#      show-sql: true
-#    main:
-#      web-development-type: servlet
-#      application:
-#    name: crm-demo
-#  thymeleaf:
-#    cache: false
-#    prefix: classpath:/templates/
-#    suffix: .html
-#    mode: HTML
-#server:
-#  port: 8080
-#logging:
-#  level:
-#    org.thymeleaf: DEBUG
 
 spring:
   datasource:
@@ -47,7 +12,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
       show-sql: true
       properties:
         hibernate:
@@ -56,16 +21,13 @@ spring:
       web-development-type: servlet
       application:
     name: crm-demo
-  freemarker:
-    suffix: .ftlh
-    expose-request-attributes: true
-  thymeleaf:
-    cache: false
-    prefix: classpath:/templates/
-    suffix: .html
-    mode: HTML
 server:
   port: 8080
 logging:
   level:
     org.thymeleaf: DEBUG
+
+security:
+  jwt:
+    token:
+      secret-key: my-secret-key-is-1C4E0A2D3B5F2D784E6A1B423D6F247D

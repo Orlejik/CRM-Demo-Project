@@ -1,22 +1,24 @@
 package crm.demo.Enteties;
 
+import java.util.Collection;
 import java.util.List;
 
+import crm.demo.Enums.RoleEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Data
+@Builder
 @Setter
 @Entity
 @Table(name = "CrmUser")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CrmUser {
+public class CrmUser implements UserDetails {
     
     @Id
     @Column
@@ -24,25 +26,29 @@ public class CrmUser {
     Long id;
     
     @Column
-    String name;
+    String firstName;
     
     @Column
-    String surname;
-    
+    String lastName;
+
     @Column
+    String login;
+    
+    @Column(name = "password", nullable = false)
     String password;
 
-    @OneToOne(
-            fetch = FetchType.LAZY,
-            mappedBy = "crmUser",
-            orphanRemoval = true)
-    Role role;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    RoleEnum role;
 
-    @Column
-    Boolean isActive;
+    @Column(nullable = false)
+    Boolean isActive = true;
 
-    @Column
-    Boolean isBlocked;
+    @Column(nullable = false)
+    Boolean isBlocked = false;
+
+    @Column(nullable = false)
+    Boolean isAccountExpired = false;
 
     @Column(unique = true)
     String emailAddress;
@@ -59,8 +65,39 @@ public class CrmUser {
     @Column(unique = true)
     String phoneNumber;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     Customer customer;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_"+role.name()));
+//        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return !isAccountExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !isBlocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isActive;
+    }
     
 }

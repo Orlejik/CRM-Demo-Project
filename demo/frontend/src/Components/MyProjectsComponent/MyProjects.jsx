@@ -8,8 +8,13 @@ import axios from "axios";
 
 export default function MyProjects(props) {
     const [projects, setProject] = useState([])
+    const token = localStorage.getItem("token");
     useEffect(() => {
-        axios.get("http://localhost:8080/api/project/")
+        axios.get(`http://localhost:8080/api/my/projects`,{
+            headers: {
+                Authorization: `Bearer ${token}`
+            } 
+        })
             .then(res => setProject(res.data))
             .catch(err => console.log(err))
     }, []);
