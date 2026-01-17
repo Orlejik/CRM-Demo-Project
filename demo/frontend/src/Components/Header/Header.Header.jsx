@@ -1,14 +1,14 @@
 import './Header.css'
 import * as React from "react";
 import {NavLink} from 'react-router-dom'
-import { useAuth } from '../../Security/AuthContext';
-import { useEffect, useRef, useState } from "react";
+import {useAuth} from '../../Security/AuthContext';
+import {useEffect, useRef, useState} from "react";
 
 export default function Header(props) {
     const {token, user, logout} = useAuth();
     const menuRef = useRef(null)
     const [open, setOpen] = useState(false);
-      // закрытие при клике вне меню
+    // закрытие при клике вне меню
     useEffect(() => {
         const handler = (e) => {
             if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -26,10 +26,14 @@ export default function Header(props) {
                 <ul className="nav-left">
                     {token && (
                         <>
-                            <NavLink to="/dashboard"><li>Dashboard</li></NavLink>
+                            <NavLink to="/dashboard">
+                                <li>Dashboard</li>
+                            </NavLink>
 
                             {user?.role === "ADMIN" && (
-                                <NavLink to="/admin"><li>Admin</li></NavLink>
+                                <NavLink to="/admin">
+                                    <li>Admin</li>
+                                </NavLink>
                             )}
                         </>
                     )}
@@ -49,34 +53,37 @@ export default function Header(props) {
 
                         {/* DROPDOWN — ТОЛЬКО ЕСЛИ ЗАЛОГИНЕН */}
                         {token && open && (
-                            <ul className="account-dropdown">
-                                <li>
-                                    <NavLink to="/my-settings" onClick={() => setOpen(false)}>
-                                    <div>
-                                      My settings  
+                            <>
+                                <div className="account-dropdown">
+                                    <div className="dropDown-item">
+                                        Hello, {user.firstName}
                                     </div>
-                                    </NavLink>
-                                </li>
-                                <li>
-                                    <NavLink to="/my-projects" onClick={() => setOpen(false)}> 
-                                    <div>My Projects</div></NavLink>
-                                </li>
-                                
-                                <li>
-                                    <div>
-                                       <button
-                                        className="logout-btn"
-                                        onClick={() => {
-                                            logout();
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        Logout
-                                    </button> 
+                                    <div className="dropDown-item">
+                                        <NavLink to="/my-settings" onClick={() => setOpen(false)}>
+                                            <div>
+                                                My settings
+                                            </div>
+                                        </NavLink>
                                     </div>
-                                    
-                                </li>
-                            </ul>
+                                    <div className="dropDown-item">
+                                        <NavLink to="/my-projects" onClick={() => setOpen(false)}>
+                                            <div>My Projects</div>
+                                        </NavLink>
+                                    </div>
+                                    <div className="dropDown-item">
+                                        <button
+                                            className="logout-btn"
+                                            onClick={() => {
+                                                logout();
+                                                setOpen(false);
+                                            }}
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </>
                         )}
                     </li>
 

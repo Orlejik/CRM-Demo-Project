@@ -65,7 +65,7 @@ public class CrmUser implements UserDetails {
     @Column(unique = true)
     String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     Customer customer;
 

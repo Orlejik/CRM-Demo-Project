@@ -1,6 +1,7 @@
 package crm.demo.Components;
 
 import crm.demo.DTOs.CurrentUserDTO;
+import crm.demo.DTOs.CurrentUserUpdateDto;
 import crm.demo.DTOs.CustomerDTO;
 import crm.demo.Enteties.CrmUser;
 import crm.demo.Enteties.Customer;
@@ -8,21 +9,48 @@ import crm.demo.Enteties.Project;
 import crm.demo.Repositories.CrmUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
 
-//@CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
+@CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
 public class CRMUserComponent {
     private final CrmUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("users")
-    public List<CrmUser> usersList(){
-        return userRepository.findAll();
+    public List<CurrentUserUpdateDto> usersList(){
+        return userRepository.findAll()
+                .stream()
+                .map(user -> {
+                    Customer customer = user.getCustomer();
+                    return new CurrentUserUpdateDto(
+                            user.getId(),
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getEmailAddress(),
+                            user.getLogin(),
+                            user.getAddress(),
+                            user.getCity(),
+                            user.getCountry(),
+                            user.getPhoneNumber(),
+                            user.getIsBlocked(),
+                            user.getRole().name(),
+                            user.getIsActive(),
+                            user.getIsAccountExpired(),
+                            new CustomerDTO(
+                                    customer.getId(),
+                                    customer.getNickName()
+                            )
+                    );
+                })
+                .toList(); // or .collect(Collectors.toList())
     }
 
     @GetMapping("users/{id}")
@@ -44,6 +72,55 @@ public class CRMUserComponent {
                          customer.getNickName()
                  )
          );
+    }
+
+    @Transactional
+    @PutMapping("my/user")
+    public CurrentUserUpdateDto updateUser(Authentication authentication, @RequestBody CurrentUserUpdateDto dto){
+        String login = authentication.getName();
+        CrmUser user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Customer customer = user.getCustomer();
+
+        // Update user fields
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.emailAddress() != null) user.setEmailAddress(dto.emailAddress());
+        if (dto.login() != null) user.setLogin(dto.login());
+        if (dto.address() != null) user.setAddress(dto.address());
+        if (dto.city() != null) user.setCity(dto.city());
+        if (dto.country() != null) user.setCountry(dto.country());
+        if (dto.phoneNumber() != null) user.setPhoneNumber(dto.phoneNumber());
+
+        // Update customer fields
+        if (dto.customerDTO() != null && dto.customerDTO().nickName() != null) {
+                customer.setNickName(dto.customerDTO().nickName());
+            // save customer if needed, or cascade will do it
+        }
+
+        userRepository.save(user); // Persis
+
+        // Return updated DTO to frontend (transform user to CurrentUserDTO)
+        return new CurrentUserUpdateDto(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmailAddress(),
+                user.getLogin(),
+                user.getAddress(),
+                user.getCity(),
+                user.getCountry(),
+                user.getPhoneNumber(),
+                user.getIsBlocked(),
+                user.getRole().name(),
+                user.getIsActive(),
+                user.getIsAccountExpired(),
+                new CustomerDTO(
+                        customer.getId(),
+                        customer.getNickName()
+                )
+        );
     }
 
     @PostMapping("user-add")

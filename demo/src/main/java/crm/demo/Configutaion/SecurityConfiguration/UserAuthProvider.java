@@ -50,7 +50,7 @@ public class UserAuthProvider {
                 claims.put("firstName", newUser.getFirstName());
                 claims.put("lastName", newUser.getLastName());
                 claims.put("userName", newUser.getUsername());
-                claims.put("rolle", newUser.getRole());
+                claims.put("role", newUser.getRole());
                 claims.put("password", newUser.getPassword());
                 claims.put("email", newUser.getEmailAddress());
             }
