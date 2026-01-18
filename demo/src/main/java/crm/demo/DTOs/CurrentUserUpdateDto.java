@@ -4,7 +4,6 @@ public record CurrentUserUpdateDto(
         Long id,
         String firstName,
         String lastName,
-//        String password,
         String emailAddress,
         String login,
         String address,

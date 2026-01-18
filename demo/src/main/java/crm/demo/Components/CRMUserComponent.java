@@ -54,8 +54,28 @@ public class CRMUserComponent {
     }
 
     @GetMapping("users/{id}")
-    public CrmUser getUserById(@PathVariable Long id){
-        return userRepository.findById(id).orElseThrow(()->new RuntimeException(" There is no user with such id -  "+id));
+    public CurrentUserUpdateDto getUserById(@PathVariable Long id){
+        CrmUser user = userRepository.findById(id).orElseThrow(()->new RuntimeException(" There is no user with such id -  "+id));
+        Customer customer = user.getCustomer();
+        return new  CurrentUserUpdateDto(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmailAddress(),
+                user.getLogin(),
+                user.getAddress(),
+                user.getCity(),
+                user.getCountry(),
+                user.getPhoneNumber(),
+                user.getIsBlocked(),
+                user.getRole().name(),
+                user.getIsActive(),
+                user.getIsAccountExpired(),
+                new CustomerDTO(
+                        customer.getId(),
+                        customer.getNickName()
+                )
+        );
     }
     @GetMapping("my/user")
     public CurrentUserDTO getUserByPrincipal(Authentication authentication){
