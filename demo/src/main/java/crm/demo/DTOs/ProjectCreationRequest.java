@@ -13,5 +13,5 @@ public class ProjectCreationRequest {
     private LocalDate deadLine;
     private String projectDescription;
     private Long ownerId;
-    private String statusCode = "100";
+    private String statusCode;
 }

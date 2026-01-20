@@ -10,6 +10,7 @@ public record ProjectDTO(
         LocalDate deadLine,
         String projectDescription,
         LocalDate createdOn,
+        String owner,
         String creatorName,
         String status
 ) {
@@ -22,6 +23,7 @@ public record ProjectDTO(
                 project.getProjectDescription(),
                 project.getCreatedOn(),
                 project.getOwner().getNickName(),
+                project.getCreatorName(),
                 project.getStatus().getDisplayName()
         );
     }

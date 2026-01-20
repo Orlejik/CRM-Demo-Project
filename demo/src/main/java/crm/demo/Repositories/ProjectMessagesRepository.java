@@ -5,7 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import crm.demo.Enteties.ProjectMessages;
 
+import java.util.List;
+
 @Repository
 public interface ProjectMessagesRepository extends JpaRepository<ProjectMessages, Long>{
-    
+
+    List<ProjectMessages> findAllByProjectId(Long id);
 }

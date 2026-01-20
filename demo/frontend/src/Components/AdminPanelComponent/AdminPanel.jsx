@@ -104,17 +104,39 @@ export default props => {
      * ------------------------------Projects section ----------------------------------------------------------
      */
     useEffect(() => {
-        request("GET", "/api/projects")
-            .then((res) => {
-                setProjects(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Failed to load projects data");
-                setLoading(false);
-            });
-    }, []);
+               request("GET", "/api/projects")
+                   .then((res) => {
+                       setProjects(res.data);
+                       setLoading(false);
+                   })
+                   .catch((err) => {
+                       console.error(err);
+                       setError("Failed to load projects data");
+                       setLoading(false);
+                   });
+           }, []);
+
+               // Navigate to user details page
+    const handleViewProj = (projectId) => {
+        navigate(`/project/${projectId}`); // make sure you have this route in React Router
+    };
+
+    // Navigate to edit page
+    const handleEditProj = (projectId) => {
+        navigate(`/project/${projectId}/edit`); // edit page route
+    };
+    const handleDeleteProj = async (projId) => {
+        if (!window.confirm("Are you sure you want to delete this Project?")) return;
+
+        try {
+            await request("DELETE", `/api/project/${projId}`);
+            // Remove from state
+            setCrmUsers((prev) => prev.filter((u) => u.id !== projId));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete Project");
+        }
+    };
     /**
      * ------------------------------ Completed Projects section --------------------------------------------------
      * ------------------------------------------------------------------------------------------------------------
@@ -125,18 +147,18 @@ export default props => {
      * ------------------------------ Admin Side
      * ------------------------------ Messages section
      */
-    useEffect(() => {
-        request("GET", "/api/project-messages")
-            .then((res) => {
-                setMessages(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Failed to load Messages data");
-                setLoading(false);
-            });
-    }, []);
+    // useEffect(() => {
+    //     request("GET", "/api/project-messages")
+    //         .then((res) => {
+    //             setMessages(res.data);
+    //             setLoading(false);
+    //         })
+    //         .catch((err) => {
+    //             console.error(err);
+    //             setError("Failed to load Messages data");
+    //             setLoading(false);
+    //         });
+    // }, []);
 
     /**
      * ------------------------------ Completed Messages Section
@@ -148,18 +170,18 @@ export default props => {
      * ------------------------------Admin Side
      * ------------------------------Logs section
      */
-    useEffect(() => {
-        request("GET", "/api/logs")
-            .then((res) => {
-                setLogs(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error(err);
-                setError("Failed to load user data");
-                setLoading(false);
-            });
-    }, []);
+    // useEffect(() => {
+    //     request("GET", "/api/logs")
+    //         .then((res) => {
+    //             setLogs(res.data);
+    //             setLoading(false);
+    //         })
+    //         .catch((err) => {
+    //             console.error(err);
+    //             setError("Failed to load user data");
+    //             setLoading(false);
+    //         });
+    // }, []);
 
     /**
      * ------------------------------ Completed Logs Section
@@ -196,8 +218,7 @@ export default props => {
                                         <span>
                                             <NoDataMessage message="No users....check.."/>
                                         </span>
-
-                    </span>
+                                    </span>
                                 ) : (
                                     <Table striped bordered hover>
                                         <thead>
@@ -222,7 +243,7 @@ export default props => {
                                                     <th style={{
                                                         cursor: "pointer",
                                                         color: "blue",
-                                                        textDecoration: "underline"
+                                                        textDecoration: "none"
                                                     }}
                                                         onClick={() => handleView(user.id)}>{user.login}</th>
                                                     <th>0</th>
@@ -297,7 +318,54 @@ export default props => {
                         </Tabs>
                     </Tab>
                     <Tab eventKey="projects" title="Projects">
-                        Tab content for Contact
+                         {!loading && !error && projects.length === 0 ? (
+                                    <span className={"messageRow"}>
+                                        <span>
+                                            <NoDataMessage message="No projects....check.."/>
+                                        </span>
+                                    </span>
+                                ) : (
+                                    <Table striped bordered hover>
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Project Name</th>
+                                            <th>DeadLine</th>
+                                            <th>Created on</th>
+                                            <th>Created by</th>
+                                            <th>Owner</th>
+                                            <th>Status</th>
+                                            <th>Delete</th>
+                                        </tr>
+
+                                        </thead>
+                                        <tbody>
+                                        {projects.map(project => {
+                                            return (
+                                                <tr key={project.id}>
+                                                    <th>{project.id}</th>
+                                                    <th style={{
+                                                        cursor: "pointer",
+                                                        color: "blue",
+                                                        textDecoration: "none"
+                                                    }}
+                                                        onClick={() => handleViewProj(project.id)}>{project.projectName}</th>
+                                                    <th>{project.deadLine}</th>
+                                                    <th>{project.createdOn}</th>
+                                                    <th>{project.creatorName}</th>
+                                                    <th>{project.owner}</th>
+                                                    <th>{project.status}</th>
+                                                    <th>
+                                                        <Button variant="danger" onClick={() => handleDelete(project.id)}>
+                                                            Delete
+                                                        </Button>
+                                                    </th>
+                                                </tr>
+                                            )
+                                        })}
+                                        </tbody>
+                                    </Table>
+                                )}
                     </Tab>
                     <Tab eventKey="messages" title="Messages">
                         Tab content for Contact

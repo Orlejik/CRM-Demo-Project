@@ -42,36 +42,57 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-               .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/**", "/api/my/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-                        .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET,
+                                        "/api/my/**",
+                                        "/api/status",
+                                        "/api/customers",
+                                        "/api/config",
+                                        "/api/projects",
+                                        "/api/project-messages/project/*/messages",
+                                        "/api/users",
+                                        "/api/project-messages/project/*",
+                                        "/api/project-messages/**",
+                                        "/api/projects/**",
+                                        "/api/logs/by-project/**",
+                                        "/api/logs/**",
+                                        "/api/messages/**"
+                                        ).authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                                .requestMatchers(
+                                        "/api/project/**",
+                                        "/api/project-messages/**",
+                                        "/api/my/**"
+                                ).authenticated()
+//                        .anyRequest().authenticated()
                 )
+
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-            DaoAuthenticationProvider  authProvider = new DaoAuthenticationProvider(userService.userDetailsService());
-            authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
-            return authProvider;
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userService.userDetailsService());
+        authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
+        return authProvider;
 
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 

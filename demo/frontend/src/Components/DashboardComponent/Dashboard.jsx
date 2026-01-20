@@ -4,20 +4,33 @@ import axios from "axios";
 import "./Dashboard.css"
 import PageName from "../Pagename/PageName";
 import NoDataMessage from "../Messages/NoDataMessage";
+import {request} from "../Helpers/AxiosHelper/AxiosHelper";
+import {Button} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
+
 
 export default function Dashboard(props) {
-    const [projects, setProject] = useState([])
+    const [projects, setProjects] = useState([]);
+        const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+                const navigate = useNavigate();
 
-    useEffect(() => {
-        axios.get("http://localhost:8080/api/projects")
-            .then(res => {
-                console.log("RAW RESPONSE:", res);
-                console.log("DATA:", res.data);
-                console.log("IS ARRAY:", Array.isArray(res.data));
-                setProject(res.data);
-            })
-            .catch(err => console.error("API ERROR:",err))
-    }, []);
+   useEffect(() => {
+           request("GET", "/api/projects")
+               .then((res) => {
+                   setProjects(res.data);
+                   setLoading(false);
+               })
+               .catch((err) => {
+                   console.error(err);
+                   setError("Failed to load projects data");
+                   setLoading(false);
+               });
+       }, []);
+
+           const handleView = (projectId) => {
+        navigate(`/projects/${projectId}`); // make sure you have this route in React Router
+    };
 
     return (
         <div>
@@ -32,6 +45,7 @@ export default function Dashboard(props) {
                             <th>Created on</th>
                             <th>Dead Line</th>
                             <th>Owner</th>
+                            <th>Assigned To</th>
                             <th>Status</th>
                         </tr>
                         </thead>
@@ -48,13 +62,18 @@ export default function Dashboard(props) {
                             projects.map(project => {
                                 return(
                                     <tr key={project.id}>
-                                        <td>
-                                            <a href={`http://localhost:8080/api/project/${project.id}`}>
+                                        <td style={{
+                                                        cursor: "pointer",
+                                                        color: "blue",
+                                                        textDecoration: "none"
+                                                    }}
+                                                    onClick={() => handleView(project.id)}>
                                             {project.projectName}
-                                            </a>
+
                                         </td>
                                         <td>{project.createdOn}</td>
                                         <td>{project.deadLine}</td>
+                                        <td>{project.creatorName}</td>
                                         <td>{project.creatorName}</td>
                                         <td>{project.status.displayName}</td>
                                     </tr>

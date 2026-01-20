@@ -12,9 +12,10 @@ import {useAuth} from "../Security/AuthContext";
 import RoleRoute from "../Security/RoleRoute";
 import AdminPanel from "./../Components/AdminPanelComponent/AdminPanel"
 import {useEffect} from "react";
-import {setupAxiosInterceptors} from "./../Components/Helpers/AxiosHelper/setupAxiosInterceptors";
+import {setupAxiosInterceptors} from "../Components/Helpers/AxiosHelper/AxiosInterceptors";
 import NotFound from "../Components/NotFoundComponent/NotFound";
 import UserDetails from "../Components/UserDetailsComponent/UserDetails";
+import ProjectByComponent from "../Components/ProjectByIDComponent/ProjectByComponent"
 
 function App() {
     const {logout} = useAuth();
@@ -36,10 +37,12 @@ function App() {
                         <Route path="/my-projects" element={<MyProjects/>}/>
                         <Route path="/my-settings" element={<MySettings/>}/>
                         <Route path="/create-new-project" element={<CreateNewProject/>}/>
+                        <Route path="/project/:id" element={<ProjectByComponent />} />
 
                         <Route element={<RoleRoute allowedRoles={["ADMIN"]}/>}>
                             <Route path="/admin" element={<AdminPanel message="Admin"/>}/>
                             <Route path="/users/:id" element={<UserDetails/>}/>
+                            
                         </Route>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>

@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
-//@CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
-//@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
@@ -36,36 +35,43 @@ public class ProjectComponent {
     }
 
     @GetMapping("project/{id}")
-    public Project getProjectById(@PathVariable Long id){
-        return projectRepository.findById(id).orElseThrow(()->new RuntimeException("No Project with such ID " + id));
+    public ProjectDTO getProjectById(@PathVariable Long id){
+        Project project =  projectRepository.findById(id).orElseThrow(()->new RuntimeException("No Project with such ID " + id));
+        return ProjectDTO.from(project);
     }
 
     @PostMapping("project-add")
-    public ProjectResponse createNewProject(@Valid @RequestBody ProjectCreationRequest projectReq){
-
+    public ProjectResponse createNewProject(@Valid @RequestBody ProjectCreationRequest projectReq, Principal principal){
         Customer customer = customerRepository.findById(projectReq.getOwnerId())
                 .orElseThrow(()->new RuntimeException("no such id"));
-        Status status = statusRepository.findByCode(projectReq.getStatusCode());
-        LocalDate projCreatedOn = LocalDate.now();
+
+        String statusCode = projectReq.getStatusCode() != null
+                ? projectReq.getStatusCode()
+                : "100";
+
+        Status status = statusRepository.findByCode(statusCode)
+                .orElseThrow(() ->
+                        new IllegalStateException("Status not found: " + statusCode)
+                );
+
 
         Project newProject = new Project();
-        Logs projLogs = new Logs();
 
         newProject.setProjectName(projectReq.getProjectName());
         newProject.setDeadLine(projectReq.getDeadLine());
-        newProject.setOwner(customer);
         newProject.setProjectDescription(projectReq.getProjectDescription());
-        newProject.setCreatorName(customer.getNickName());
-        newProject.setCreatedOn(projCreatedOn);
+        newProject.setOwner(customer);
+        newProject.setCreatorName(principal.getName());
+        newProject.setCreatedOn(LocalDate.now());
         newProject.setStatus(status);
-
         Project savedProject = projectRepository.save(newProject);
 
-        projLogs.setProject(savedProject);
-        projLogs.setUser(customer);
-        projLogs.setLogDateTime(projCreatedOn);
-        projLogs.setLogText("New Project created by "+customer.getNickName());
-        logsRepository.save(projLogs);
+        Logs log = new Logs();
+        log.setProject(savedProject);
+        log.setUser(customer);
+        log.setLogDateTime(LocalDate.now());
+        log.setLogText("New project created by " + customer.getNickName());
+        logsRepository.save(log);
 
         System.out.println(projectReq);
 

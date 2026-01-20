@@ -3,6 +3,7 @@ import PageName from "../Pagename/PageName";
 import axios from "axios";
 import "./CreateNewProject.css"
 import { useNavigate } from "react-router-dom";
+import api from "./../Helpers/AxiosHelper/Axios"
 
 
 export default function CreateNewProject(props){
@@ -25,7 +26,8 @@ export default function CreateNewProject(props){
         projectName: "",
         deadLine: "",
         projectDescription: "",
-        ownerId: null
+        ownerId: null,
+        statusCode: "100"
     })
 
     const handleChanges = (e)=>{
@@ -48,14 +50,42 @@ export default function CreateNewProject(props){
             console.log(formData.createdOn)
             const response = await axios.post(
                 "http://localhost:8080/api/project-add",
-                formData
+                formData,
+                {headers: {
+                Authorization: `Bearer ${token}`
+            }}
             )
             navigate("/dashboard")
-           console.log(response.data);
+           console.log(formData);
         }catch (error){
             console.log(error)
         }
     }
+
+    // const [formData, setFormData] = useState({
+    //     projectName: "",
+    //     deadLine: "",
+    //     projectDescription: "",
+    //     ownerId: "",
+    //     statusCode: 100
+    // });
+
+    // useEffect(() => {
+    //     api.get("/api/customers")
+    //         .then(res => setCustomers(res.data))
+    //         .catch(console.error);
+    // }, []);
+
+    // const handleChanges = e => {
+    //     const { name, value } = e.target;
+    //     setFormData(prev => ({ ...prev, [name]: value }));
+    // };
+
+    // const handleSubmit = async e => {
+    //     e.preventDefault();
+    //     await api.post("/api/project-add", formData);
+    //     navigate("/dashboard");
+    // };
 
     return(
         <div>

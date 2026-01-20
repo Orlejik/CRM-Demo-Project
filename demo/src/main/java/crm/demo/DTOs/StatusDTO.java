@@ -1,6 +1,15 @@
 package crm.demo.DTOs;
 
-public class StatusDTO {
-    private String code;
-    private String displayName;
+import crm.demo.Enteties.Status;
+
+public record StatusDTO(
+        String code,
+        String displayName) {
+
+    public static StatusDTO from(Status status){
+        return new StatusDTO(
+                status.getCode(),
+                status.getDisplayName()
+        );
+    }
 }

@@ -1,0 +1,4 @@
+1. Enter in folder C:\Users\artiom.oriol\Documents\JavaProj\demo\temp\Composes
+    this will start the Docker Container with all needed data in it
+
+    In case if you want to

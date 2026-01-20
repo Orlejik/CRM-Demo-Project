@@ -1,5 +1,7 @@
 package crm.demo.Enteties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -32,7 +35,11 @@ public class ProjectMessages {
     @Column(name = "message_author")
     String author;
 
+    @Column (name = "date-time")
+    LocalDate messageDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("messages")
     @JoinColumn(name = "project_id", nullable = false)
-    Project projectsMessages;
+    Project project;
 }

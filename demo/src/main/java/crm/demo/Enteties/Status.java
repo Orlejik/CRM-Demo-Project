@@ -1,5 +1,6 @@
 package crm.demo.Enteties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class Status {
     @Column
     String displayName;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_status")
-    List<Project> project;
+    @OneToMany(mappedBy = "status", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Project> projects;
 }
