@@ -2,6 +2,7 @@ package crm.demo.Components;
 
 import crm.demo.DTOs.CreateMessageRequest;
 import crm.demo.DTOs.MessageDTO;
+import crm.demo.DTOs.ProjectDTO;
 import crm.demo.DTOs.ProjectMessageDTO;
 import crm.demo.Enteties.*;
 import crm.demo.Repositories.*;
@@ -23,8 +24,10 @@ public class ProjectMessagesComponent {
     private final CrmUserRepository crmUserRepository;
 
     @GetMapping("project-messages")
-    public List<ProjectMessages> getAllMessages(){
-        return messagesRepository.findAll();
+    public List<ProjectMessageDTO> getAllMessages(){
+        return messagesRepository.findAll().stream()
+                .map(ProjectMessageDTO::from)
+                .toList();
     }
 
     @GetMapping("project-messages/project/{projectId}/get-messages")

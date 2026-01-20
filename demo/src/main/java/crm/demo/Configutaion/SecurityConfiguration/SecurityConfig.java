@@ -53,6 +53,7 @@ public class SecurityConfig {
                                         "/api/projects",
                                         "/api/project-messages/project/*/get-messages",
                                         "/api/users",
+                                        "/api/project-messages",
                                         "/api/users/**",
                                         "/api/project-messages/project/*",
                                         "/api/project-messages/**",

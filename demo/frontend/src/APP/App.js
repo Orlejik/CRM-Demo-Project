@@ -37,12 +37,12 @@ function App() {
                         <Route path="/my-projects" element={<MyProjects/>}/>
                         <Route path="/my-settings" element={<MySettings/>}/>
                         <Route path="/create-new-project" element={<CreateNewProject/>}/>
-                        <Route path="/project/:id" element={<ProjectByComponent />} />
+                        <Route path="/project/:id" element={<ProjectByComponent/>}/>
 
                         <Route element={<RoleRoute allowedRoles={["ADMIN"]}/>}>
                             <Route path="/admin" element={<AdminPanel message="Admin"/>}/>
                             <Route path="/users/:id" element={<UserDetails/>}/>
-                            
+
                         </Route>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>

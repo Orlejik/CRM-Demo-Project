@@ -14,10 +14,8 @@ export default props => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const [config, setConfig] = useState([])
-    const [messages, setMessages] = useState([])
-    const [logs, setLogs] = useState([])
     const [projects, setProjects] = useState([])
-    const { projectId } = useParams();
+    const {projectId} = useParams();
 
     /**
      * ------------------------------------------------------------------------------------------------------------
@@ -105,19 +103,19 @@ export default props => {
      * ------------------------------Projects section ----------------------------------------------------------
      */
     useEffect(() => {
-               request("GET", "/api/projects")
-                   .then((res) => {
-                       setProjects(res.data);
-                       setLoading(false);
-                   })
-                   .catch((err) => {
-                       console.error(err);
-                       setError("Failed to load projects data");
-                       setLoading(false);
-                   });
-           }, []);
+        request("GET", "/api/projects")
+            .then((res) => {
+                setProjects(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Failed to load projects data");
+                setLoading(false);
+            });
+    }, []);
 
-               // Navigate to user details page
+    // Navigate to user details page
     const handleViewProj = (projectId) => {
         navigate(`/project/${projectId}`); // make sure you have this route in React Router
     };
@@ -148,18 +146,21 @@ export default props => {
      * ------------------------------ Admin Side
      * ------------------------------ Messages section
      */
-    // useEffect(() => {
-    //     request("GET", "/api/project-messages")
-    //         .then((res) => {
-    //             setMessages(res.data);
-    //             setLoading(false);
-    //         })
-    //         .catch((err) => {
-    //             console.error(err);
-    //             setError("Failed to load Messages data");
-    //             setLoading(false);
-    //         });
-    // }, []);
+
+    const [messages, setMessages] = useState([])
+    useEffect(() => {
+        request("GET", "/api/project-messages")
+            .then((res) => {
+                console.log("Messages response", res)
+                setMessages(Array.isArray(res.data) ? res.data : []);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Failed to load Messages data");
+                setLoading(false);
+            });
+    }, []);
 
     /**
      * ------------------------------ Completed Messages Section
@@ -171,18 +172,20 @@ export default props => {
      * ------------------------------Admin Side
      * ------------------------------Logs section
      */
-    // useEffect(() => {
-    //     request("GET", "/api/logs")
-    //         .then((res) => {
-    //             setLogs(res.data);
-    //             setLoading(false);
-    //         })
-    //         .catch((err) => {
-    //             console.error(err);
-    //             setError("Failed to load user data");
-    //             setLoading(false);
-    //         });
-    // }, []);
+    const [logs, setLogs] = useState([])
+    useEffect(() => {
+        request("GET", "/api/logs")
+            .then((res) => {
+                console.log("Messages response", res)
+                setLogs(Array.isArray(res.data) ? res.data : []);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Failed to load user data");
+                setLoading(false);
+            });
+    }, []);
 
     /**
      * ------------------------------ Completed Logs Section
@@ -319,60 +322,78 @@ export default props => {
                         </Tabs>
                     </Tab>
                     <Tab eventKey="projects" title="Projects">
-                         {!loading && !error && projects.length === 0 ? (
-                                    <span className={"messageRow"}>
+                        {!loading && !error && projects.length === 0 ? (
+                            <span className={"messageRow"}>
                                         <span>
                                             <NoDataMessage message="No projects....check.."/>
                                         </span>
                                     </span>
-                                ) : (
-                                    <Table striped bordered hover>
-                                        <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Project Name</th>
-                                            <th>DeadLine</th>
-                                            <th>Created on</th>
-                                            <th>Created by</th>
-                                            <th>Owner</th>
-                                            <th>Status</th>
-                                            <th>Delete</th>
-                                        </tr>
+                        ) : (
+                            <Table striped bordered hover>
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Project Name</th>
+                                    <th>DeadLine</th>
+                                    <th>Created on</th>
+                                    <th>Created by</th>
+                                    <th>Owner</th>
+                                    <th>Status</th>
+                                    <th>Delete</th>
+                                </tr>
 
-                                        </thead>
-                                        <tbody>
-                                        {projects.map(project => {
-                                            return (
-                                                <tr key={project.id}>
-                                                    <th>{project.id}</th>
-                                                    <th style={{
-                                                        cursor: "pointer",
-                                                        color: "blue",
-                                                        textDecoration: "none"
-                                                    }}
-                                                        onClick={() => handleViewProj(project.id)}>{project.projectName}</th>
-                                                    <th>{project.deadLine}</th>
-                                                    <th>{project.createdOn}</th>
-                                                    <th>{project.creatorName}</th>
-                                                    <th>{project.owner}</th>
-                                                    <th>{project.status}</th>
-                                                    <th>
-                                                        <Button variant="danger" onClick={() => handleDeleteProj(project.id)}>
-                                                            Delete
-                                                        </Button>
-                                                    </th>
-                                                </tr>
-                                            )
-                                        })}
-                                        </tbody>
-                                    </Table>
-                                )}
+                                </thead>
+                                <tbody>
+                                {projects.map(project => {
+                                    return (
+                                        <tr key={project.id}>
+                                            <th>{project.id}</th>
+                                            <th style={{
+                                                cursor: "pointer",
+                                                color: "blue",
+                                                textDecoration: "none"
+                                            }}
+                                                onClick={() => handleViewProj(project.id)}>{project.projectName}</th>
+                                            <th>{project.deadLine}</th>
+                                            <th>{project.createdOn}</th>
+                                            <th>{project.creatorName}</th>
+                                            <th>{project.owner}</th>
+                                            <th>{project.status}</th>
+                                            <th>
+                                                <Button variant="danger" onClick={() => handleDeleteProj(project.id)}>
+                                                    Delete
+                                                </Button>
+                                            </th>
+                                        </tr>
+                                    )
+                                })}
+                                </tbody>
+                            </Table>
+                        )}
                     </Tab>
                     <Tab eventKey="messages" title="Messages">
-                        Tab content for Contact
+                        {messages.map(message => {
+                            return (
+                                <div>
+                                    <span>{message.author}</span>
+                                    <span>{message.messageContent}</span>
+                                    <span>{message.messageDate}</span>
+                                </div>
+                            )
+                        })}
                     </Tab>
                     <Tab eventKey="logs" title="Logs">
-                        Tab content for Contact
+                        {logs.map(log => {
+                            return (
+                                <div>
+                                    <span>{log.author}</span>
+                                    <span>{log.logText}</span>
+                                    <span>{log.logDateTime}</span>
+                                    <span>{log.userNick}</span>
+                                    <span>{log.projectId}</span>
+                                </div>
+                            )
+                        })}
                     </Tab>
                 </Tabs>
             </div>

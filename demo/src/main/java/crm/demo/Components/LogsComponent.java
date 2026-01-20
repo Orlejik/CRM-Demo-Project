@@ -1,6 +1,7 @@
 package crm.demo.Components;
 
 import crm.demo.DTOs.LogsDTO;
+import crm.demo.DTOs.ProjectDTO;
 import crm.demo.Enteties.Logs;
 import crm.demo.Repositories.LogsRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,10 @@ public class LogsComponent {
     private final LogsRepository logsRepository;
 
     @GetMapping
-    public List<Logs> getAllLogs() {
-        return logsRepository.findAll();
+    public List<LogsDTO> getAllLogs() {
+        return logsRepository.findAll().stream()
+                .map(LogsDTO::from)
+                .toList();
     }
 
     @GetMapping("/by-user/{userId}")
