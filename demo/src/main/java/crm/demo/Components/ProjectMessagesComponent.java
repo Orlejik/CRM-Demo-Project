@@ -2,6 +2,7 @@ package crm.demo.Components;
 
 import crm.demo.DTOs.CreateMessageRequest;
 import crm.demo.DTOs.MessageDTO;
+import crm.demo.DTOs.ProjectMessageDTO;
 import crm.demo.Enteties.*;
 import crm.demo.Repositories.*;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
-//@CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
@@ -27,23 +27,26 @@ public class ProjectMessagesComponent {
         return messagesRepository.findAll();
     }
 
-    @GetMapping("project-messages/project/{projectId}/messages")
-    public List<ProjectMessages> getMessagesByProjectID(@PathVariable Long id){
-        return messagesRepository.findAllByProjectId(id);
+    @GetMapping("project-messages/project/{projectId}/get-messages")
+    public List<ProjectMessageDTO> getMessagesByProjectID(@PathVariable("projectId") Long projectId){
+        return messagesRepository.findAllByProjectId(projectId)
+                .stream()
+                .map(m -> new ProjectMessageDTO(
+                        m.getId(),
+                        m.getMessageContent(),
+                        m.getAuthor(),
+                        m.getMessageDate()
+                ))
+                .toList();
     }
 
-    @PostMapping("project-messages/project/{projectId}/messages")
+    @PostMapping("project-messages/project/{projectId}/post-messages")
     public MessageDTO submitAMessage(@RequestBody CreateMessageRequest request, @PathVariable Long projectId, Principal principal){
-        // 1. Получаем текущего пользователя
         String username = principal.getName();
-
         CrmUser user = crmUserRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("Customer not found"));
-
-
         // 2. Получаем проект
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-
         // 3. Создаём сообщение
         ProjectMessages message = new ProjectMessages();
         message.setMessageContent(request.getMessageContent());
@@ -51,7 +54,6 @@ public class ProjectMessagesComponent {
         message.setMessageDate(LocalDate.now());
         message.setCustomersMessages(user.getCustomer());
         message.setProject(project);
-
         // 4. Сохраняем
         ProjectMessages saved = messagesRepository.save(message);
         MessageDTO mdto = mapToDto(saved);

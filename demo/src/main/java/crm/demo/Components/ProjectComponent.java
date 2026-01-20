@@ -92,9 +92,11 @@ public class ProjectComponent {
     }
 
     @GetMapping("my/projects")
-    public List<Project> getProjectsByUser(Principal principal){
+    public List<ProjectDTO> getProjectsByUser(Principal principal){
 
-        return projectRepository.findByOwnerNickName(principal.getName());
+        return projectRepository.findByOwnerNickName(principal.getName()).stream()
+                .map(ProjectDTO::from)
+                .toList();
     }
 
     @PutMapping("project-update/{id}")

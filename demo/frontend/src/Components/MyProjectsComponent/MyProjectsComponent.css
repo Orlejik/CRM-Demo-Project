@@ -28,6 +28,10 @@
 .bubleLink p{
     line-height: 30px;
 }
+.table-wrapper table td:first-child{
+    display: block;
+    text-align: center;
+}
 
 @keyframes jumpingBuble {
     0% {

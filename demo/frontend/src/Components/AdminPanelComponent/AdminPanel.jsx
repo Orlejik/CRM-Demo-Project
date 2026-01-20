@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 import {Button} from "react-bootstrap";
 import NoDataMessage from "../Helpers/NoDataMessage";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 export default props => {
     const [crmUsers, setCrmUsers] = useState([]);
@@ -17,6 +17,7 @@ export default props => {
     const [messages, setMessages] = useState([])
     const [logs, setLogs] = useState([])
     const [projects, setProjects] = useState([])
+    const { projectId } = useParams();
 
     /**
      * ------------------------------------------------------------------------------------------------------------

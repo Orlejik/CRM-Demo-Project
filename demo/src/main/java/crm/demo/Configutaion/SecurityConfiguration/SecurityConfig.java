@@ -45,15 +45,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((authorize) -> authorize
                                 .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/my/**",
                                         "/api/status",
                                         "/api/customers",
                                         "/api/config",
                                         "/api/projects",
-                                        "/api/project-messages/project/*/messages",
+                                        "/api/project-messages/project/*/get-messages",
                                         "/api/users",
+                                        "/api/users/**",
                                         "/api/project-messages/project/*",
                                         "/api/project-messages/**",
                                         "/api/projects/**",
@@ -64,16 +64,13 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
                                 .requestMatchers(
                                         "/api/project/**",
-                                        "/api/project-messages/**",
+                                        "/api/project-messages/project/*/post-messages",
                                         "/api/my/**"
                                 ).authenticated()
-//                        .anyRequest().authenticated()
                 )
-
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

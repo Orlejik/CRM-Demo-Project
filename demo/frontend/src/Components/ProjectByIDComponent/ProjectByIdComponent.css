@@ -28,7 +28,46 @@
 }
 
 .messagesBlock{
-    height: 450px;
-    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    max-width: 800px;
+    margin: auto;
+    gap: 10px;
+    background-color: #f9f9f9;
+    height: 80vh; /* optional, for scrollable area */
+    overflow-y: auto;
+}
+.messageItem{
+    width: 60%;
+    border: 1px solid #333333;
+    padding: 10px;
+    border-radius: 15px ;
+}
 
+.messageItem {
+    max-width: 60%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+/* even → left */
+.messageItem.left {
+    align-self: flex-start;
+    background-color: #f2f2f2;
+}
+
+/* odd → right */
+.messageItem.right {
+    align-self: flex-end;
+    background-color: #dff1ff;
+}
+
+.dateAuthor{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px 6px;
+    font-size: 10px;
 }
