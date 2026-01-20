@@ -357,7 +357,7 @@ export default props => {
                                                     <th>{project.owner}</th>
                                                     <th>{project.status}</th>
                                                     <th>
-                                                        <Button variant="danger" onClick={() => handleDelete(project.id)}>
+                                                        <Button variant="danger" onClick={() => handleDeleteProj(project.id)}>
                                                             Delete
                                                         </Button>
                                                     </th>

@@ -7,7 +7,6 @@ import {Button, Col, FormControl, InputGroup, Row, Form} from "react-bootstrap";
 import "./ProjectByIdComponent.css"
 import axios from "axios";
 
-
 export default function ProjectByComponent() {
     const token = localStorage.getItem("token");
     const {id} = useParams();
@@ -15,15 +14,22 @@ export default function ProjectByComponent() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [logs, setLogs] = useState([])
+    const [customers, setCustomers] = useState([]);
     const [formData, setFormData] = useState({})
     const [status, setStatus] = useState([]);
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
     let cancelled = false;
+    const [projectForm, setProjectForm] = useState({
+        projectName: "",
+        ownerId: null,
+        statusId: null,
+        deadLine: ""
+    });
     const hasFetched = useRef(false);
     const handleChanges = (e) => {
         const {name, value} = e.target;
-        setFormData(prev => ({
+        setProjectForm(prev => ({
             ...prev,
             [name]: value
         }))
@@ -47,8 +53,6 @@ export default function ProjectByComponent() {
                 }
             });
     }, [id])
-
-
     useEffect(() => {
         request("GET", "/api/status")
             .then(res => {
@@ -56,13 +60,21 @@ export default function ProjectByComponent() {
                 setLoading(false)
             })
             .catch(err => {
-                console.error(err);
                 setError("Failed to load Project");
                 setLoading(false);
             });
     }, [])
-
-
+    useEffect(() => {
+        request("GET", "/api/customers")
+            .then(res => {
+                setCustomers(res.data)
+                setLoading(false)
+            })
+            .catch(err => {
+                setError("Failed to load Project");
+                setLoading(false);
+            });
+    }, [])
     const sendMessage = async () => {
         if (!messageText.trim()) return;
         await request("POST", `/api/project-messages/project/${id}/post-messages`, {
@@ -72,7 +84,6 @@ export default function ProjectByComponent() {
         loadMessages();
         loadLogs();
     };
-
     useEffect(() => {
         request("GET", `/api/project-messages/project/${id}/get-messages`)
             .then(res => {
@@ -84,26 +95,20 @@ export default function ProjectByComponent() {
                 setLoading(false);
             });
     }, [id])
-
     const loadMessages = async () => {
         const res = await request("GET", `/api/project-messages/project/${id}/get-messages`);
         setMessages(res.data);
     };
-
     const loadLogs = async () => {
         const res = await request("GET", `/api/logs/by-project/${id}`);
         setLogs(res.data);
     };
-
     useEffect(() => {
         loadMessages();
         loadLogs();
     }, [id]);
-
     const handleSubmit = (e) => {
         e.preventDefault()
-
-
         const payload = {
             projectName: formData.projectName,
             deadLine: formData.deadLine,
@@ -112,7 +117,20 @@ export default function ProjectByComponent() {
 
         }
     }
+    const handleUpdateProject = async (projectId) => {
+        try {
+            const res = await axios.put(
+                `http://localhost:8080/api/project-update/${projectId}`,
+                projectForm,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
+            console.log("Updated project:", res.data);
+            setProject(res.data); // update local state
+        } catch (err) {
+            console.error("Failed to update project", err);
+        }
+    };
     useEffect(() => {
         request("GET", `/api/project/${id}`)
             .then(res => {
@@ -125,26 +143,28 @@ export default function ProjectByComponent() {
                 setLoading(false);
             });
     }, [id]);
-
     if (error) return <p>{error}</p>;
     if (!project) return <p>Loading...</p>;
-
     return (
         <div>
 
             <PageName name={"Project " + project.projectName + " details"}/>
             <section className="row justify-content-center mb-4">
                 <Col className="container-shadow mt-4" xs={9}>
-                    <form onSubmit={handleSubmit} className="row">
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        handleUpdateProject(project.id);
+                    }} className="row">
                         <Col sm={6}>
                             <InputGroup className="col-sm-12 mt-3">
-                                <Col sm={4}><InputGroup.Text id="basic-addon1" className="text-center"> Project
+                                <Col sm={4}><InputGroup.Text value={projectForm.projectName} id="basic-addon1" className="text-center"> Project
                                     Name </InputGroup.Text></Col>
                                 <Col sm={8}><FormControl className="sm-5 text-center"
                                                          placeholder={project.projectName}
                                                          area-label="projName"
+                                                         onChange={handleChanges}
                                                          aria-describedby="basic-addon1"
-                                                         disabled={true}/></Col>
+                                                         /></Col>
                             </InputGroup>
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={4}>
@@ -175,11 +195,14 @@ export default function ProjectByComponent() {
                                     <InputGroup.Text id="basic-addon4 mb-3"> Project Owner </InputGroup.Text>
                                 </Col>
                                 <Col sm={8}>
-                                    <FormControl className="sm-5 text-center"
-                                                 placeholder={project.owner}
-                                                 area-label="lastName"
-                                                 aria-describedby="basic-addon4"
-                                                 disabled={true}/>
+                                    <Form.Select onChange={handleChanges} aria-label="status Default select example">
+                                        <option value={projectForm.owner}>{project.owner}</option>
+                                        {customers.map(customer => {
+                                            return (
+                                                <option value={projectForm.owner}> {customer.nickName}</option>
+                                            )
+                                        })}
+                                    </Form.Select>
                                 </Col>
                             </InputGroup>
                             <InputGroup className="col-sm-12 mt-3">
@@ -187,7 +210,7 @@ export default function ProjectByComponent() {
                                     Status </InputGroup.Text></Col>
                                 <Col sm={8}>
                                     <Form.Select aria-label="status Default select example">
-                                        <option value={formData.status}>{project.status}</option>
+                                        <option value={projectForm.status} onChange={handleChanges}>{project.status}</option>
                                         {status.map(stat => {
                                             return (
                                                 <option key={stat.id}
@@ -208,7 +231,8 @@ export default function ProjectByComponent() {
                                                          name="creator"
                                                          area-label="creator"
                                                          aria-describedby="basic-addon12"
-                                                         onChange={handleChanges}/>
+                                                         onChange={handleChanges}
+                                                         disabled={true}/>
                                 </Col>
                             </InputGroup>
                         </Col>

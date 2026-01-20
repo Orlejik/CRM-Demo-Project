@@ -65,7 +65,8 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/api/project/**",
                                         "/api/project-messages/project/*/post-messages",
-                                        "/api/my/**"
+                                        "/api/my/**",
+                                        "/api/project-update/*"
                                 ).authenticated()
                 )
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

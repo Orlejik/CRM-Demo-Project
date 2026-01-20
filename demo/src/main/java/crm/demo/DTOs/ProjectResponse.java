@@ -17,6 +17,7 @@ public class ProjectResponse {
     private LocalDate deadLine;
     private LocalDate createdOn;
     private String statusCode;
+    private String statusName;
     private Long ownerId;
-    private String ownerNickName;
+    private String ownerName;
 }

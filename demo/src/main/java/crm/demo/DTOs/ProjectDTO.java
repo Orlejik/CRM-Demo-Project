@@ -15,6 +15,9 @@ public record ProjectDTO(
         String status
 ) {
 
+//    public ProjectDTO(Long id, String projectName, Long aLong, String projectDescription, Long aLong1, String owner, LocalDate deadLine) {
+//    }
+
     public static ProjectDTO from(Project project){
         return new ProjectDTO(
                 project.getId(),

@@ -31,15 +31,11 @@ export default function CreateNewProject(props){
     })
 
     const handleChanges = (e)=>{
-
         const{name, value}=e.target;
-
         setFormData(prev=>({
             ...prev,
             [name]: value
         }))
-
-        console.log(e.target.value)
     };
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -62,41 +58,14 @@ export default function CreateNewProject(props){
         }
     }
 
-    // const [formData, setFormData] = useState({
-    //     projectName: "",
-    //     deadLine: "",
-    //     projectDescription: "",
-    //     ownerId: "",
-    //     statusCode: 100
-    // });
-
-    // useEffect(() => {
-    //     api.get("/api/customers")
-    //         .then(res => setCustomers(res.data))
-    //         .catch(console.error);
-    // }, []);
-
-    // const handleChanges = e => {
-    //     const { name, value } = e.target;
-    //     setFormData(prev => ({ ...prev, [name]: value }));
-    // };
-
-    // const handleSubmit = async e => {
-    //     e.preventDefault();
-    //     await api.post("/api/project-add", formData);
-    //     navigate("/dashboard");
-    // };
-
     return(
         <div>
 
             <div>
                 <PageName name="Create new Project" />
             </div>
-
             <div>
                 <form onSubmit={handleSubmit}>
-                {/* <form onSubmit={onSubmitnewProject}> */}
                     <div className="formContainer">
                         <div className="labelsInputsBlock inputsFirstRow">
                             <div className="labelsInputs">
