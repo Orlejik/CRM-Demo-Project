@@ -6,7 +6,8 @@ import {Button} from "react-bootstrap";
 import "./LogRegForm.css"
 
 export default function LoginRegisterForm() {
-    const {login} = useAuth();
+    const { login } = useAuth();
+
     const [active, setActive] = useState("login");
     const [form, setForm] = useState({
         firstName: "",
@@ -15,7 +16,9 @@ export default function LoginRegisterForm() {
         email: "",
         password: ""
     });
+
     const [errorMessage, setErrorMessage] = useState(null);
+
     const onChangeHandler = (e) => {
         setForm({
             ...form,
@@ -39,10 +42,7 @@ export default function LoginRegisterForm() {
         }
 
         if (err.response?.data?.errors) {
-            // For validation errors like [{ msg: "Email required" }]
-            return err.response.data.errors
-                .map(e => e.msg)
-                .join(", ");
+            return err.response.data.errors.map(e => e.msg).join(", ");
         }
 
         if (typeof err.response?.data === "string") {
@@ -51,30 +51,41 @@ export default function LoginRegisterForm() {
 
         return fallback;
     };
+
     const onSubmitLogin = async (e) => {
         e.preventDefault();
         setErrorMessage(null);
+
         try {
-            const response = await request("POST", "/auth/login", form);
+            const response = await request("POST", "/auth/login", {
+                login: form.login,
+                password: form.password
+            });
+
             if (!response?.data?.token) {
                 throw new Error("No token in response");
             }
-            login(response.data.token)
+
+            login(response.data.token);
         } catch (err) {
-            setErrorMessage(getErrorMessage(err, "Login failed")
-            );
+            setErrorMessage(getErrorMessage(err, "Login failed"));
         }
     };
+
     const onSubmitRegister = async (e) => {
         e.preventDefault();
         setErrorMessage(null);
+
         try {
             const response = await request("POST", "/auth/register", form);
-            login(response.data.token)
+
+            if (!response?.data?.token) {
+                throw new Error("No token in response");
+            }
+
+            login(response.data.token);
         } catch (err) {
-            setErrorMessage(
-                setErrorMessage(getErrorMessage(err, "Login failed"))
-            )
+            setErrorMessage(getErrorMessage(err, "Register failed"));
         }
     };
     return (

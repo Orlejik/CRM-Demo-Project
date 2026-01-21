@@ -21,18 +21,16 @@ function App() {
     const {logout} = useAuth();
     useEffect(() => {
         setupAxiosInterceptors(logout);
-    }, []);
+    }, [logout]);
     return (
         <div className="App">
-            <Header pageTitle="Front End  Authentication with JWT"/>
+            <Header pageTitle="Front End Authentication with JWT"/>
             <div className="container-fluid">
-
                 <Routes>
-                    <Route path="/login-register" element={<PublicOnly>
-                        <LoginRegisterForm/>
-                    </PublicOnly>}/>
+                    <Route path="/login-register" element={<PublicOnly />}/>
                     <Route path="/" element={<Home/>}/>
-                    <Route element={< ProtectedRoute/>}>
+
+                    <Route element={<ProtectedRoute/>}>
                         <Route path="/dashboard" element={<Dashboard/>}/>
                         <Route path="/my-projects" element={<MyProjects/>}/>
                         <Route path="/my-settings" element={<MySettings/>}/>
@@ -40,10 +38,10 @@ function App() {
                         <Route path="/project/:id" element={<ProjectByComponent/>}/>
 
                         <Route element={<RoleRoute allowedRoles={["ADMIN"]}/>}>
-                            <Route path="/admin" element={<AdminPanel message="Admin"/>}/>
+                            <Route path="/admin" element={<AdminPanel/>}/>
                             <Route path="/users/:id" element={<UserDetails/>}/>
-
                         </Route>
+
                         <Route path="*" element={<NotFound/>}/>
                     </Route>
                 </Routes>
@@ -52,9 +50,9 @@ function App() {
     );
 }
 
-export default App;
-
-function PublicOnly({children}) {
-    const {token} = useAuth();
-    return token ? <Navigate to="/" replace/> : children
+function PublicOnly() {
+    const { token } = useAuth();
+    return token ? <Navigate to="/" replace /> : <LoginRegisterForm />;
 }
+
+export default App;

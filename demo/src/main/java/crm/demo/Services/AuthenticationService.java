@@ -1,6 +1,6 @@
 package crm.demo.Services;
 
-import crm.demo.Configutaion.SecurityConfiguration.UserAuthProvider;
+//import crm.demo.Configutaion.SecurityConfiguration.UserAuthProvider;
 import crm.demo.DTOs.SecurityDTOs.JwtAuthenticationResponse;
 import crm.demo.DTOs.SecurityDTOs.SignInDto;
 import crm.demo.DTOs.SecurityDTOs.SignUpDto;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserService userService;
-    private final UserAuthProvider jwtService;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -31,18 +31,22 @@ public class AuthenticationService {
     @Transactional
     public JwtAuthenticationResponse signUp(SignUpDto request){
 
+        if (userService.existsByLogin(request.getLogin())) {
+            throw new RuntimeException("User with this login already exists");
+        }
+
         Customer customer = new Customer();
         customer.setNickName(request.getLogin());
 
-        var user = CrmUser.builder()
+        CrmUser user = CrmUser.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .login(request.getLogin())
                 .emailAddress(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .isActive(true)
                 .isBlocked(false)
                 .isAccountExpired(false)
-                .password(passwordEncoder.encode(request.getPassword()))
                 .role(RoleEnum.USER)
                 .customer(customer)
                 .build();
@@ -50,8 +54,8 @@ public class AuthenticationService {
         customer.setCrmUser(user);
         userService.createUser(user);
 
-        var jwt = jwtService.generateSecretToken(user);
-        return new JwtAuthenticationResponse(jwt);
+        String token = jwtService.generateAccessToken(user);
+        return new JwtAuthenticationResponse(token);
     }
 
     /**
@@ -62,17 +66,19 @@ public class AuthenticationService {
      */
 
     public  JwtAuthenticationResponse signIn(SignInDto request){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getLogin(),
-                request.getPassword()
-        ));
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getLogin(),
+                        request.getPassword()
+                )
+        );
 
-        var user = userService
+        CrmUser user = (CrmUser) userService
                 .userDetailsService()
                 .loadUserByUsername(request.getLogin());
 
-        var jwt = jwtService.generateSecretToken(user);
-        return new JwtAuthenticationResponse(jwt);
+        String token = jwtService.generateAccessToken(user);
+        return new JwtAuthenticationResponse(token);
     }
 
 }

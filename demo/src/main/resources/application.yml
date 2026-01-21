@@ -31,4 +31,5 @@ logging:
 security:
   jwt:
     token:
-      secret-key: my-secret-key-is-1C4E0A2D3B5F2D784E6A1B423D6F247D
+      secret: "THIS_IS_A_64_CHAR_SECRET_KEY_FOR_HS256_AND_IT_MUST_BE_LONG_ENOUGH!!!"
+      access-expiration: 900000 # 15 минут

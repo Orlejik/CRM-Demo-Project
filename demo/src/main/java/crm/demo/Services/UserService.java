@@ -87,4 +87,12 @@ public class UserService {
         save(user);
     }
 
+    public boolean existsByLogin(String login) {
+        return userRepository.existsByLogin(login);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmailAddress(email);
+    }
+
 }

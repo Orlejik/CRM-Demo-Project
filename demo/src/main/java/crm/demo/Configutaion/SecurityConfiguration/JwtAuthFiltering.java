@@ -1,5 +1,6 @@
 package crm.demo.Configutaion.SecurityConfiguration;
 
+import crm.demo.Services.JwtService;
 import crm.demo.Services.UserService;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.FilterChain;
@@ -9,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +28,7 @@ public class JwtAuthFiltering extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
     private final UserService userService;
-    private final UserAuthProvider jwtService;
+    private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(
@@ -39,28 +43,41 @@ public class JwtAuthFiltering extends OncePerRequestFilter {
             return;
         }
 
-        var jwt = authHeader.substring(BEARER_PREFIX.length());
-        var username = jwtService.extractUserName(jwt);
+        String jwt = authHeader.substring(BEARER_PREFIX.length());
+        String username;
+        String role = jwtService.extractRole(jwt);
 
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_"+role));
 
-        if (StringUtils.isNoneEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+        try {
+            username = jwtService.extractUsername(jwt);
+        } catch (Exception e) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
             UserDetails userDetails = userService
                     .userDetailsService()
                     .loadUserByUsername(username);
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                authorities
+                        );
+
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
                 );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
-            }else{
-                System.out.println("================== Token is not valid!!! ===========================");
             }
         }
         filterChain.doFilter(request, response);
