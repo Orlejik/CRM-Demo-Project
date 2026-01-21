@@ -59,6 +59,8 @@ public class SecurityConfig {
                                         "/api/project-messages/**",
                                         "/api/projects/**",
                                         "/api/logs/by-project/**",
+                                        "/api/benefeciaries",
+                                        "/api/cities",
                                         "/api/logs/**",
                                         "/api/messages/**"
                                         ).authenticated()

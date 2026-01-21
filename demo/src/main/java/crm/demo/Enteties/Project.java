@@ -1,8 +1,6 @@
 package crm.demo.Enteties;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -46,6 +44,17 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     Customer owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    City city;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "beneficiary_id")
+    private Beneficiary beneficiary;
+
+    @Column
+    Long budget;
 
     @Column
     String creatorName;

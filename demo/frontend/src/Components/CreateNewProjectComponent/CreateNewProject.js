@@ -4,6 +4,7 @@ import axios from "axios";
 import "./CreateNewProject.css"
 import { useNavigate } from "react-router-dom";
 import api from "./../Helpers/AxiosHelper/Axios"
+import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 
 
 export default function CreateNewProject(props){
@@ -11,16 +12,61 @@ export default function CreateNewProject(props){
     const[customers, setCustomers] = useState([]);
     const navigate = useNavigate();
     const token = localStorage.getItem("token")
+    const [benefeciaries, setBenefeciaries] = useState([]);
+    const [cities, setCities] = useState([]);
+        const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // useEffect(() => {
+    //     axios.get("http://localhost:8080/api/customers", {
+    //         headers: {
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //     })
+    //         .then(res => setCustomers(res.data))
+    //         .catch(err => console.error(err));
+    // }, []);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/customers", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-            .then(res => setCustomers(res.data))
-            .catch(err => console.error(err));
-    }, []);
+            request("GET", "/api/customers")
+                .then((res) => {
+                    setCustomers(res.data);
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setError("Failed to load setBenefeciaries data");
+                    setLoading(false);
+                });
+        }, []);
+
+
+    useEffect(() => {
+            request("GET", "/api/benefeciaries")
+                .then((res) => {
+                    setBenefeciaries(res.data);
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setError("Failed to load setBenefeciaries data");
+                    setLoading(false);
+                });
+        }, []);
+
+        useEffect(() => {
+            request("GET", "/api/cities")
+                .then((res) => {
+                    setCities(res.data);
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    setError("Failed to load Cities data");
+                    setLoading(false);
+                });
+        }, []);
+
 
     const[formData, setFormData]=useState({
         projectName: "",
@@ -88,6 +134,29 @@ export default function CreateNewProject(props){
                                     }
                                 </select>
                             </div>
+
+                            <div className="labelsInputs">
+                                <select>
+                                    <option>Select city</option>
+                                    {cities.map(city=>{
+                                        return(
+                                            <option key={city.id}>{city.city}</option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+
+                            <div className="labelsInputs">
+                                <select>
+                                    <option>Select Benefeciary</option>
+                                    {benefeciaries.map(benef=>{
+                                        return(
+                                            <option key={benef.id}>{benef.benificiatyFirstName}</option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+
                         </div>
                     </div>
                     <div className="formContainer">

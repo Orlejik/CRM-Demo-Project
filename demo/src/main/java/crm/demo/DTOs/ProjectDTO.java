@@ -12,11 +12,12 @@ public record ProjectDTO(
         LocalDate createdOn,
         String owner,
         String creatorName,
-        String status
-) {
+        String status,
+        String benefeciary,
+        String city,
+        Long budget
 
-//    public ProjectDTO(Long id, String projectName, Long aLong, String projectDescription, Long aLong1, String owner, LocalDate deadLine) {
-//    }
+) {
 
     public static ProjectDTO from(Project project){
         return new ProjectDTO(
@@ -27,7 +28,10 @@ public record ProjectDTO(
                 project.getCreatedOn(),
                 project.getOwner().getNickName(),
                 project.getCreatorName(),
-                project.getStatus().getDisplayName()
+                project.getStatus().getDisplayName(),
+                project.getBeneficiary().getCompanyName(),
+                project.getCity().getCity(),
+                project.getBudget()
         );
     }
 }

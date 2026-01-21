@@ -5,11 +5,13 @@ import crm.demo.Enteties.*;
 import crm.demo.Repositories.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/")
@@ -20,7 +22,8 @@ public class ProjectComponent {
     private final CustomerRepository customerRepository;
     private final StatusRepository statusRepository;
     private final LogsRepository logsRepository;
-    private final CrmUserRepository crmUserRepository;
+    private final BenefeciaryRepository benefeciaryRepository;
+    private final CitiesRepository citiesRepository;
 
 
     @GetMapping("projects")
@@ -39,54 +42,46 @@ public class ProjectComponent {
     }
 
     @PostMapping("project-add")
-    public ProjectResponse createNewProject(@Valid @RequestBody ProjectCreationRequest projectReq, Principal principal) {
-        Customer customer = customerRepository.findById(projectReq.getOwnerId())
-                .orElseThrow(() -> new RuntimeException("no such id"));
+    @Transactional
+    public ProjectResponse createNewProject(
+            @Valid @RequestBody ProjectCreationRequest req,
+            Principal principal
+    ) {
+        Customer owner = customerRepository.findById(req.getOwnerId())
+                .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
 
-        String statusCode = projectReq.getStatusCode() != null
-                ? projectReq.getStatusCode()
-                : "100";
+        Status status = statusRepository.findByCode(
+                Optional.ofNullable(req.getStatusCode()).orElse("100")
+        ).orElseThrow(() -> new IllegalStateException("Status not found"));
 
-        Status status = statusRepository.findByCode(statusCode)
-                .orElseThrow(() ->
-                        new IllegalStateException("Status not found: " + statusCode)
-                );
+        City city = citiesRepository.findById(req.getCityId())
+                .orElseThrow(() -> new IllegalArgumentException("City not found"));
 
+        Beneficiary beneficiary = benefeciaryRepository.findById(req.getBeneficiaryId())
+                .orElseThrow(() -> new IllegalArgumentException("Beneficiary not found"));
 
-        Project newProject = new Project();
+        Project project = new Project();
+        project.setProjectName(req.getProjectName());
+        project.setDeadLine(req.getDeadLine());
+        project.setProjectDescription(req.getProjectDescription());
+        project.setOwner(owner);
+        project.setCreatorName(principal.getName());
+        project.setCreatedOn(LocalDate.now());
+        project.setStatus(status);
+        project.setCity(city);
+        project.setBeneficiary(beneficiary);
+        project.setBudget(req.getBudget());
 
-        newProject.setProjectName(projectReq.getProjectName());
-        newProject.setDeadLine(projectReq.getDeadLine());
-        newProject.setProjectDescription(projectReq.getProjectDescription());
-        newProject.setOwner(customer);
-        newProject.setCreatorName(principal.getName());
-        newProject.setCreatedOn(LocalDate.now());
-        newProject.setStatus(status);
-        Project savedProject = projectRepository.save(newProject);
+        Project saved = projectRepository.save(project);
 
         Logs log = new Logs();
-        log.setProject(savedProject);
-        log.setUser(customer);
+        log.setProject(saved);
+        log.setUser(owner);
         log.setLogDateTime(LocalDate.now());
-        log.setLogText("New project created by " + customer.getNickName());
+        log.setLogText("New project created by " + owner.getNickName());
         logsRepository.save(log);
 
-        System.out.println(projectReq);
-
-        ProjectResponse projectResponse = new ProjectResponse(
-                savedProject.getId(),
-                savedProject.getProjectName(),
-                savedProject.getProjectDescription(),
-                savedProject.getDeadLine(),
-                savedProject.getCreatedOn(),
-                savedProject.getStatus().getCode(),
-                savedProject.getStatus().getDisplayName(),
-                customer.getId(),
-                customer.getNickName()
-        );
-        System.out.println(projectResponse);
-
-        return projectResponse;
+        return ProjectResponse.from(saved);
     }
 
     @GetMapping("my/projects")
@@ -169,7 +164,10 @@ public class ProjectComponent {
                 savedProject.getStatus().getCode(),
                 savedProject.getStatus().getDisplayName(),
                 savedProject.getOwner().getId(),
-                savedProject.getOwner().getNickName()
+                savedProject.getOwner().getNickName(),
+                savedProject.getBeneficiary().getId(),
+                savedProject.getCity().getId(),
+                savedProject.getBudget()
         );
     }
 

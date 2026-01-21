@@ -14,4 +14,7 @@ public class ProjectCreationRequest {
     private String projectDescription;
     private Long ownerId;
     private String statusCode;
+    private Long beneficiaryId;
+    private Long cityId;
+    private Long budget;
 }

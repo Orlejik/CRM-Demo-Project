@@ -1,5 +1,6 @@
 package crm.demo.DTOs;
 
+import crm.demo.Enteties.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,17 +8,35 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class ProjectResponse {
-    private Long id;
-    private String projectName;
-    private String projectDescription;
-    private LocalDate deadLine;
-    private LocalDate createdOn;
-    private String statusCode;
-    private String statusName;
-    private Long ownerId;
-    private String ownerName;
+
+public record ProjectResponse(
+        Long id,
+        String projectName,
+        String projectDescription,
+        LocalDate deadLine,
+        LocalDate createdOn,
+        String statusCode,
+        String statusName,
+        Long ownerName,
+        String ownerId,
+        Long beneficiaryId,
+        Long cityId,
+        Long budget
+) {
+    public static ProjectResponse from(Project project) {
+        return new ProjectResponse(
+                project.getId(),
+                project.getProjectName(),
+                project.getProjectDescription(),
+                project.getDeadLine(),
+                project.getCreatedOn(),
+                project.getStatus().getCode(),
+                project.getStatus().getDisplayName(),
+                project.getOwner().getId(),
+                project.getCreatorName(),
+                project.getBeneficiary().getId(),
+                project.getCity().getId(),
+                project.getBudget()
+        );
+    }
 }
