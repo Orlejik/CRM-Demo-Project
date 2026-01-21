@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Data
 @Setter
+@Builder
 @Entity
 @Table(name = "customer")
 @AllArgsConstructor
@@ -34,7 +35,8 @@ public class Customer {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     List<ProjectMessages> messagesList;
 
-    @OneToOne(mappedBy = "customer")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "crm_user_id", nullable = false, unique = true)
     CrmUser crmUser;
 
 }

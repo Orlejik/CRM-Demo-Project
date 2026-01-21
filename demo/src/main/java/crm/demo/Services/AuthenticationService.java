@@ -7,6 +7,8 @@ import crm.demo.DTOs.SecurityDTOs.SignUpDto;
 import crm.demo.Enteties.CrmUser;
 import crm.demo.Enteties.Customer;
 import crm.demo.Enums.RoleEnum;
+import crm.demo.Repositories.CrmUserRepository;
+import crm.demo.Repositories.CustomerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +23,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final CustomerRepository customerRepository;
+    private final CrmUserRepository userRepository;
 
     /**
      * Регистрация пользователя
@@ -29,31 +33,29 @@ public class AuthenticationService {
      * @return токен
      */
     @Transactional
-    public JwtAuthenticationResponse signUp(SignUpDto request){
+    public JwtAuthenticationResponse signUp(SignUpDto request) {
 
-        if (userService.existsByLogin(request.getLogin())) {
-            throw new RuntimeException("User with this login already exists");
-        }
+        //  создаём user
+        CrmUser user = new CrmUser();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setLogin(request.getLogin());
+        user.setEmailAddress(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(RoleEnum.USER);
 
+        //  создаём customer И СРАЗУ привязываем user
         Customer customer = new Customer();
         customer.setNickName(request.getLogin());
-
-        CrmUser user = CrmUser.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .login(request.getLogin())
-                .emailAddress(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .isActive(true)
-                .isBlocked(false)
-                .isAccountExpired(false)
-                .role(RoleEnum.USER)
-                .customer(customer)
-                .build();
-
         customer.setCrmUser(user);
-        userService.createUser(user);
 
+        // ОБРАТНАЯ СВЯЗЬ (КРИТИЧНО)
+        user.setCustomer(customer);
+
+        // сохраняем ВЛАДЕЛЬЦА
+        customerRepository.save(customer);
+
+        // JWT
         String token = jwtService.generateAccessToken(user);
         return new JwtAuthenticationResponse(token);
     }

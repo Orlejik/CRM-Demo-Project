@@ -31,7 +31,7 @@ public class CrmUser implements UserDetails {
     @Column
     String lastName;
 
-    @Column
+    @Column(nullable = false, unique = true)
     String login;
     
     @Column(name = "password", nullable = false)
@@ -41,12 +41,15 @@ public class CrmUser implements UserDetails {
     @Column(name = "role", nullable = false)
     RoleEnum role;
 
+    @Builder.Default
     @Column(nullable = false)
     Boolean isActive = true;
 
+    @Builder.Default
     @Column(nullable = false)
     Boolean isBlocked = false;
 
+    @Builder.Default
     @Column(nullable = false)
     Boolean isAccountExpired = false;
 
@@ -65,14 +68,12 @@ public class CrmUser implements UserDetails {
     @Column(unique = true)
     String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @OneToOne(mappedBy = "crmUser")
     Customer customer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_"+role.name()));
-//        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

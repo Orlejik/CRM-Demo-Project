@@ -53,11 +53,16 @@ private final PasswordEncoder passwordEncoder;
             adminUser.setIsActive(true);
             adminUser.setIsBlocked(false);
             adminUser.setIsAccountExpired(false);
+
             Customer customer = new Customer();
-            customer.setNickName(adminUser.getLogin());
+            customer.setNickName("admin");
+
+
+            customer.setCrmUser(adminUser);
             adminUser.setCustomer(customer);
 
-            crmUserRepository.save(adminUser);
+
+            customerRepository.save(customer);
         }
     }
     private void createIfNotExists(String code, String displayName){
