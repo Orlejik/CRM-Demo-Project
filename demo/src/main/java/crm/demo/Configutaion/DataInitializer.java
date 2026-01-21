@@ -1,10 +1,7 @@
 package crm.demo.Configutaion;
 
-import crm.demo.Enteties.City;
-import crm.demo.Enteties.CrmUser;
-import crm.demo.Enteties.Customer;
+import crm.demo.Enteties.*;
 //import crm.demo.Enteties.RoleEntity;
-import crm.demo.Enteties.Status;
 import crm.demo.Enums.RoleEnum;
 import crm.demo.Repositories.*;
 //import crm.demo.Repositories.RoleRepository;
@@ -41,6 +38,15 @@ public class DataInitializer implements ApplicationRunner {
             createIfNotExists("215", "ON REVIEW");
             createIfNotExists("250", "REVIEWED");
             createIfNotExists("100", "NEW");
+        }
+
+        if(benefeciaryRepository.count() == 0) {
+            createBenefeciaryIfNotExists("Mark", "Mark&Co");
+            createBenefeciaryIfNotExists("John", "John & Sons");
+            createBenefeciaryIfNotExists("Alice", "Alice Corp");
+            createBenefeciaryIfNotExists("David", "David Holdings");
+            createBenefeciaryIfNotExists("Sarah", "Sarah Enterprises");
+            createBenefeciaryIfNotExists("Michael", "Michael Group");
         }
 
         if (cityRepository.count() == 0) {
@@ -96,5 +102,15 @@ public class DataInitializer implements ApplicationRunner {
                     c.setCity(city);
                     return cityRepository.save(c);
                 });
+    }
+
+    private void createBenefeciaryIfNotExists(String name, String company){
+        benefeciaryRepository.findByCompanyName(company).orElseGet(()->
+        {
+            Beneficiary beneficiary = new Beneficiary();
+            beneficiary.setBenificiatyFirstName(name);
+            beneficiary.setCompanyName(company);
+            return benefeciaryRepository.save(beneficiary);
+        });
     }
 }

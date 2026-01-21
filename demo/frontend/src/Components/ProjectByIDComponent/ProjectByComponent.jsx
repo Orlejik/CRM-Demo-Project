@@ -1,9 +1,8 @@
 import {useParams} from "react-router-dom";
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import PageName from "../Pagename/PageName";
-import api from "../Helpers/AxiosHelper/Axios";
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
-import {Button, Col, FormControl, InputGroup, Row, Form} from "react-bootstrap";
+import {Button, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
 import "./ProjectByIdComponent.css"
 import axios from "axios";
 
@@ -22,10 +21,18 @@ export default function ProjectByComponent() {
     let cancelled = false;
     const [projectForm, setProjectForm] = useState({
         projectName: "",
-        ownerId: null,
-        statusId: null,
-        deadLine: ""
+        deadLine: "",
+        ownerId: "",
+        statusCode: "",
+        budget: 0,
+        cityId: "",          // City id for select (read-only now)
+        beneficiaryId: "",
     });
+    const [statusList, setStatusList] = useState([]);
+    const [cities, setCities] = useState([]);           // For city select if needed
+    const [beneficiaries, setBeneficiaries] = useState([]);
+
+    const [budget, setBudget] = useState(null);
     const hasFetched = useRef(false);
     const handleChanges = (e) => {
         const {name, value} = e.target;
@@ -53,28 +60,26 @@ export default function ProjectByComponent() {
                 }
             });
     }, [id])
-    useEffect(() => {
-        request("GET", "/api/status")
-            .then(res => {
-                setStatus(res.data)
-                setLoading(false)
-            })
-            .catch(err => {
-                setError("Failed to load Project");
-                setLoading(false);
-            });
-    }, [])
+
     useEffect(() => {
         request("GET", "/api/customers")
-            .then(res => {
-                setCustomers(res.data)
-                setLoading(false)
-            })
-            .catch(err => {
-                setError("Failed to load Project");
-                setLoading(false);
-            });
-    }, [])
+            .then(res => setCustomers(res.data))
+            .catch(() => setError("Failed to load customers"));
+
+        request("GET", "/api/status")
+            .then(res => setStatusList(res.data))
+            .catch(() => setError("Failed to load status list"));
+
+        // Load cities and beneficiaries if you have API for those, else omit these
+        request("GET", "/api/cities")
+            .then(res => setCities(res.data))
+            .catch(() => setError("Failed to load cities"));
+
+        request("GET", "/api/benefeciaries")
+            .then(res => setBeneficiaries(res.data))
+            .catch(() => setError("Failed to load beneficiaries"));
+    }, []);
+
     const sendMessage = async () => {
         if (!messageText.trim()) return;
         await request("POST", `/api/project-messages/project/${id}/post-messages`, {
@@ -84,6 +89,17 @@ export default function ProjectByComponent() {
         loadMessages();
         loadLogs();
     };
+    const [currentUser, setCurrentUser] = useState();
+    useEffect(() => {
+        request("GET", "/api/my/user")
+            .then(res => {
+                setCurrentUser(res.data);
+                console.log(res.data)
+            })
+            .catch(err => {
+                setError("Failed to get auth user");
+            });
+    }, []);
     useEffect(() => {
         request("GET", `/api/project-messages/project/${id}/get-messages`)
             .then(res => {
@@ -122,7 +138,7 @@ export default function ProjectByComponent() {
             const res = await axios.put(
                 `http://localhost:8080/api/project-update/${projectId}`,
                 projectForm,
-                { headers: { Authorization: `Bearer ${token}` } }
+                {headers: {Authorization: `Bearer ${token}`}}
             );
 
             console.log("Updated project:", res.data);
@@ -131,6 +147,12 @@ export default function ProjectByComponent() {
             console.error("Failed to update project", err);
         }
     };
+    const userRole = currentUser?.role;
+    console.log(currentUser)
+    console.log(userRole)
+
+    const canEditBudget = userRole === "ADMIN" || userRole === "MANAGER";
+    const canEditProject = canEditBudget;
     useEffect(() => {
         request("GET", `/api/project/${id}`)
             .then(res => {
@@ -151,121 +173,190 @@ export default function ProjectByComponent() {
             <PageName name={"Project " + project.projectName + " details"}/>
             <section className="row justify-content-center mb-4">
                 <Col className="container-shadow mt-4" xs={9}>
-                    <form onSubmit={(e) => {
-                        e.preventDefault();
-                        handleUpdateProject(project.id);
-                    }} className="row">
+                    <form onSubmit={handleUpdateProject} className="row">
                         <Col sm={6}>
-                            <InputGroup className="col-sm-12 mt-3">
-                                <Col sm={4}><InputGroup.Text value={projectForm.projectName} id="basic-addon1" className="text-center"> Project
-                                    Name </InputGroup.Text></Col>
-                                <Col sm={8}><FormControl className="sm-5 text-center"
-                                                         placeholder={project.projectName}
-                                                         area-label="projName"
-                                                         onChange={handleChanges}
-                                                         aria-describedby="basic-addon1"
-                                                         /></Col>
-                            </InputGroup>
+                            {/* Project Name */}
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={4}>
-                                    <InputGroup.Text id="basic-addon2 mb-3"> Project DeadLine </InputGroup.Text>
+                                    <InputGroup.Text className="text-center">Project Name</InputGroup.Text>
                                 </Col>
                                 <Col sm={8}>
-                                    <FormControl className="sm-5 text-center"
-                                                 placeholder={project.deadLine}
-                                                 area-label="lastName"
-                                                 aria-describedby="basic-addon2"
-                                                 disabled={true}/>
+                                    <FormControl
+                                        name="projectName"
+                                        value={projectForm.projectName}
+                                        onChange={handleChanges}
+                                        readOnly={!canEditProject}
+                                        style={{
+                                            cursor: canEditProject ? "text" : "not-allowed",
+                                            backgroundColor: canEditProject ? "white" : "#f8f9fa",
+                                        }}
+                                    />
                                 </Col>
                             </InputGroup>
+
+                            {/* Project DeadLine */}
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={4}>
-                                    <InputGroup.Text id="basic-addon3 mb-3"> Project Created On </InputGroup.Text>
+                                    <InputGroup.Text>Project DeadLine</InputGroup.Text>
                                 </Col>
                                 <Col sm={8}>
-                                    <FormControl className="sm-5 text-center"
-                                                 placeholder={project.createdOn}
-                                                 area-label="lastName"
-                                                 aria-describedby="basic-addon3"
-                                                 disabled={true}/>
+                                    <Form.Control
+                                        type="date"
+                                        name="deadLine"
+                                        value={projectForm.deadLine}
+                                        onChange={handleChanges}
+                                        readOnly={!canEditProject}
+                                        style={{
+                                            cursor: canEditProject ? "text" : "not-allowed",
+                                            backgroundColor: canEditProject ? "white" : "#f8f9fa",
+                                            textAlign: "center",
+                                        }}
+                                    />
                                 </Col>
                             </InputGroup>
+
+                            {/* Project Owner */}
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={4}>
-                                    <InputGroup.Text id="basic-addon4 mb-3"> Project Owner </InputGroup.Text>
+                                    <InputGroup.Text>Project Owner</InputGroup.Text>
                                 </Col>
                                 <Col sm={8}>
-                                    <Form.Select onChange={handleChanges} aria-label="status Default select example">
-                                        <option value={projectForm.owner}>{project.owner}</option>
-                                        {customers.map(customer => {
-                                            return (
-                                                <option value={projectForm.owner}> {customer.nickName}</option>
-                                            )
-                                        })}
+                                    <Form.Select
+                                        name="ownerId"
+                                        value={projectForm.ownerId}
+                                        onChange={handleChanges}
+                                        disabled={!canEditProject}
+                                        className="text-center"
+                                    >
+                                        <option value="">Select Owner</option>
+                                        {customers.map(customer => (
+                                            <option key={customer.id} value={customer.id}>
+                                                {customer.nickName}
+                                            </option>
+                                        ))}
                                     </Form.Select>
                                 </Col>
                             </InputGroup>
+
+                            {/* Project Status */}
                             <InputGroup className="col-sm-12 mt-3">
-                                <Col sm={4}><InputGroup.Text id="basic-addon11" className="text-center"> Project
-                                    Status </InputGroup.Text></Col>
+                                <Col sm={4}>
+                                    <InputGroup.Text>Project Status</InputGroup.Text>
+                                </Col>
                                 <Col sm={8}>
-                                    <Form.Select aria-label="status Default select example">
-                                        <option value={projectForm.status} onChange={handleChanges}>{project.status}</option>
-                                        {status.map(stat => {
-                                            return (
-                                                <option key={stat.id}
-                                                        value={formData.status}>{stat.displayName}</option>
-                                            )
-                                        })}
+                                    <Form.Select
+                                        name="statusCode"
+                                        value={projectForm.statusCode}
+                                        onChange={handleChanges}
+                                        disabled={!canEditProject}
+                                        className="text-center"
+                                    >
+                                        <option value="">Select Status</option>
+                                        {statusList.map(status => (
+                                            <option key={status.id} value={status.code}>
+                                                {status.displayName}
+                                            </option>
+                                        ))}
                                     </Form.Select>
                                 </Col>
-
                             </InputGroup>
+
+                            {/* City (read-only) */}
                             <InputGroup className="col-sm-12 mt-3">
-                                <Col sm={4}><InputGroup.Text id="basic-addon12"
-                                                             className="text-center"> Created
-                                    By </InputGroup.Text></Col>
-                                <Col sm={8}><FormControl className="sm-5 text-center"
-                                                         placeholder={project.creatorName}
-                                                         value={formData.creatorName}
-                                                         name="creator"
-                                                         area-label="creator"
-                                                         aria-describedby="basic-addon12"
-                                                         onChange={handleChanges}
-                                                         disabled={true}/>
+                                <Col sm={4}>
+                                    <InputGroup.Text>City</InputGroup.Text>
+                                </Col>
+                                <Col sm={8}>
+                                    {/* Assuming cities list available, but field is read-only */}
+                                    <Form.Select
+                                        name="cityId"
+                                        value={projectForm.cityId}
+                                        disabled
+                                        className="text-center"
+                                    >
+                                        {cities.length > 0 ? (
+                                            cities.map(city => (
+                                                <option key={city.id} value={city.id}>
+                                                    {city.name}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option>{project.city?.name || "No city"}</option>
+                                        )}
+                                    </Form.Select>
+                                </Col>
+                            </InputGroup>
+
+                            {/* Beneficiary (read-only) */}
+                            <InputGroup className="col-sm-12 mt-3">
+                                <Col sm={4}>
+                                    <InputGroup.Text>Beneficiary</InputGroup.Text>
+                                </Col>
+                                <Col sm={8}>
+                                    {/* Beneficiary select disabled as per backend */}
+                                    <Form.Select
+                                        name="beneficiaryId"
+                                        value={projectForm.beneficiaryId}
+                                        disabled
+                                        className="text-center"
+                                    >
+                                        {beneficiaries.length > 0 ? (
+                                            beneficiaries.map(b => (
+                                                <option key={b.id} value={b.id}>
+                                                    {b.name || b.nickName}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option>{project.beneficiary?.nickName || "No beneficiary"}</option>
+                                        )}
+                                    </Form.Select>
+                                </Col>
+                            </InputGroup>
+
+                            {/* Budget */}
+                            <InputGroup className="col-sm-12 mt-3">
+                                <Col sm={4}>
+                                    <InputGroup.Text>Project Budget</InputGroup.Text>
+                                </Col>
+                                <Col sm={8}>
+                                    <FormControl
+                                        name="budget"
+                                        type="number"
+                                        value={projectForm.budget}
+                                        onChange={e =>
+                                            canEditBudget &&
+                                            setProjectForm(prev => ({
+                                                ...prev,
+                                                budget: Number(e.target.value),
+                                            }))
+                                        }
+                                        readOnly={!canEditBudget}
+                                        style={{
+                                            cursor: canEditBudget ? "text" : "not-allowed",
+                                            backgroundColor: canEditBudget ? "white" : "#f8f9fa",
+                                            textAlign: "center",
+                                        }}
+                                    />
                                 </Col>
                             </InputGroup>
                         </Col>
+
                         <Col sm={6}>
-                            <div className="mt-3 shadow logsBlock">
-                                {logs.map(log => {
-                                    return (
-                                        <div className=" shadow m-2 p-2" key={log.id}>
-                                            <span>{log.logDateTime}</span> <span>{log.logText}</span>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-
-                        </Col>
-                        <Col sm={12}>
-                            <Row>
-                                <Col sm={6}>
-
-                                </Col>
-                            </Row>
-                            <div>
-                                <Row className="mt-4">
-
-                                </Row>
-                            </div>
-                            <div className="d-grid gap-2 mt-5 justify-content-center">
-                                <Button variant="outline-primary" id="button-addon1" size="lg" type="submit">
-                                    Update Project
-                                </Button>
+                            {/* Logs section */}
+                            <div className="mt-3 shadow logsBlock" style={{ height: "400px", overflowY: "scroll" }}>
+                                {logs.map(log => (
+                                    <div className="shadow m-2 p-2" key={log.id}>
+                                        <span>{log.logDateTime}</span> <span>{log.logText}</span>
+                                    </div>
+                                ))}
                             </div>
                         </Col>
 
+                        <Col sm={12} className="d-grid gap-2 mt-5 justify-content-center">
+                            <Button variant="outline-primary" size="lg" type="submit" disabled={!canEditProject}>
+                                Update Project
+                            </Button>
+                        </Col>
                     </form>
                 </Col>
 
@@ -300,7 +391,14 @@ export default function ProjectByComponent() {
                                     placeholder="type your message..."
                                     rows={3}
                                     className="no-resize shadow"
+                                    value={messageText}
                                     onChange={(e) => setMessageText(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            sendMessage();
+                                        }
+                                    }}
                                 />
                             </Col>
 
@@ -308,6 +406,7 @@ export default function ProjectByComponent() {
                                 <Button
                                     variant="outline-primary"
                                     size="lg"
+                                    disabled={!messageText.trim()}
                                     onClick={sendMessage}
                                 >
                                     Send

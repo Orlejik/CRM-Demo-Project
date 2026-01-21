@@ -1,5 +1,7 @@
 package crm.demo.DTOs;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,12 +11,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ProjectCreationRequest {
-    private String projectName;
-    private LocalDate deadLine;
-    private String projectDescription;
-    private Long ownerId;
-    private String statusCode;
-    private Long beneficiaryId;
-    private Long cityId;
-    private Long budget;
+    @NotBlank
+    String projectName;
+    @NotNull LocalDate deadLine;
+    String projectDescription;
+    @NotNull Long ownerId;
+    @NotNull Long cityId;
+    @NotNull Long beneficiaryId;
+    @NotNull
+    Long budget;
+    String statusCode;
 }

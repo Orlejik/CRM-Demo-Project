@@ -1,15 +1,11 @@
 package crm.demo.DTOs;
 
 import crm.demo.Enteties.Project;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
+public record ProjectByIdDto(
 
-public record ProjectResponse(
         Long id,
         String projectName,
         String projectDescription,
@@ -17,14 +13,14 @@ public record ProjectResponse(
         LocalDate createdOn,
         String statusCode,
         String statusName,
-        String ownerName,
         Long ownerId,
+        String ownerName,
         Long beneficiaryId,
         Long cityId,
         Long budget
 ) {
-    public static ProjectResponse from(Project project) {
-        return new ProjectResponse(
+    public static ProjectByIdDto from(Project project, String requestedBy) {
+        return new ProjectByIdDto(
                 project.getId(),
                 project.getProjectName(),
                 project.getProjectDescription(),
@@ -32,8 +28,8 @@ public record ProjectResponse(
                 project.getCreatedOn(),
                 project.getStatus().getCode(),
                 project.getStatus().getDisplayName(),
-                project.getCreatorName(),
                 project.getOwner().getId(),
+                project.getOwner().getNickName(),
                 project.getBeneficiary().getId(),
                 project.getCity().getId(),
                 project.getBudget()

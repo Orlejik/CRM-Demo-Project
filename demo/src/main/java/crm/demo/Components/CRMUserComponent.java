@@ -14,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000, http://172.20.130.242:3000")
 @RestController
@@ -51,6 +54,16 @@ public class CRMUserComponent {
                     );
                 })
                 .toList(); // or .collect(Collectors.toList())
+    }
+
+    @GetMapping("/current-user")
+    public CurrentUserDTO  getCurrentUser(Principal principal) {
+        // You can use principal.getName() to get the username
+        // Then load the user from your database to get the role
+        CrmUser user = userRepository.findByLogin(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return CurrentUserDTO.from(user);
     }
 
     @GetMapping("users/{id}")

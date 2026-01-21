@@ -36,9 +36,9 @@ public class ProjectComponent {
     }
 
     @GetMapping("project/{id}")
-    public ProjectDTO getProjectById(@PathVariable Long id) {
+    public ProjectByIdDto getProjectById(@PathVariable Long id, Principal principal) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("No Project with such ID " + id));
-        return ProjectDTO.from(project);
+        return ProjectByIdDto.from(project, principal.getName());
     }
 
     @PostMapping("project-add")
@@ -163,8 +163,8 @@ public class ProjectComponent {
                 savedProject.getCreatedOn(),
                 savedProject.getStatus().getCode(),
                 savedProject.getStatus().getDisplayName(),
-                savedProject.getOwner().getId(),
                 savedProject.getOwner().getNickName(),
+                savedProject.getOwner().getId(),
                 savedProject.getBeneficiary().getId(),
                 savedProject.getCity().getId(),
                 savedProject.getBudget()

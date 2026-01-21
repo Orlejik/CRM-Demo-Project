@@ -58,6 +58,7 @@ public class SecurityConfig {
                                         "/api/project-messages/project/*",
                                         "/api/project-messages/**",
                                         "/api/projects/**",
+                                        "/api/current-user",
                                         "/api/logs/by-project/**",
                                         "/api/benefeciaries",
                                         "/api/cities",

@@ -13,13 +13,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
+
 @Data
-@Setter
 @Entity
 @Table(name = "Project")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Project {
     
     @Id
@@ -31,7 +30,7 @@ public class Project {
     String projectName;
 
     @Column
-    @JsonFormat(pattern = "MM-dd-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate deadLine;
 
     @Column
