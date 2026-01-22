@@ -2,14 +2,13 @@ import {useEffect, useState} from "react";
 import "./MySettings.css"
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 import PageName from "../Pagename/PageName";
-import {Button, Col, FormControl, InputGroup, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
+import {Button, Col, FormControl, InputGroup, Row} from "react-bootstrap";
 
 export default function MySettings(props) {
 
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     useEffect(() => {
         request("GET", "/api/my/user")
             .then((res) => {
@@ -23,13 +22,11 @@ export default function MySettings(props) {
             });
     }, []);
 
-
     const [formData, setFormData] = useState({
         firstName: "",
         lastName:"",
         role: "",
-        password: "",
-        emailAddress:  "",
+        emailAddress: "",
         login: "",
         address: "",
         city: "",
@@ -37,24 +34,29 @@ export default function MySettings(props) {
         nickName: "",
         phoneNumber: ""
     })
+    const [passwordForm, setPasswordForm] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
 
-    useEffect(() => {
+    useEffect(()=>{
         if(user){
-            setFormData({
-                firstName: user.firstName || "",
-                lastName: user.lastName ||"",
-                role: user.role || "",
-                password: user.password || "",
+           setFormData({
+            firstName: user.firstName || "",
+            lastName:user.lastName || "",
+            role: user.role || "",
                 emailAddress: user.emailAddress || "",
                 login: user.login || "",
                 address: user.address || "",
                 phoneNumber: user.phoneNumber ||"",
                 city: user.city || "",
-                country: user.country || "",
-                nickName: user.customerDTO?.nickName || ""
-            })
+                nickName: user.nickName || "",
+                country: user.country || ""
+            }); 
         }
-    }, [user]);
+        
+    }, [user])
 
     const handleChanges = (e) => {
         const {name, value} = e.target;
@@ -62,38 +64,44 @@ export default function MySettings(props) {
             ...prev,
             [name]: value
         }))
-        console.log(e.target.value)
     };
 
+    const handlePassChange=e=>{
+        const {name, value} = e.target;
+        setPasswordForm(prev=>({...prev, [name]: value}))
+    }
+
     const handleSubmit=(e)=>{
-        e.preventDefault()
-
-
-        const payload = {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            password: formData.password, // optional
-            emailAddress: formData.emailAddress,
-            login: formData.login,
+        e.preventDefault();
+    request("PUT", "/api/my/user", {
+        emailAddress: formData.emailAddress,
             address: formData.address,
             city: formData.city,
             country: formData.country,
             phoneNumber: formData.phoneNumber,
-            customerDTO: {
-                nickName: formData.nickName
-            }
-        }
-        request("PUT", "/api/my/user", payload)
-            .then(res => {
-                setUser(res.data);
-                // alert("User updated successfully");
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Failed to update user");
-            });
-        console.log(e.target.value)
+    })
+        .then(res => {
+            setUser(res.data);
+            alert("Profile updated");
+        })
+        .catch(() => alert("Failed to update profile"));
     }
+
+    const submitPassword = e => {
+        e.preventDefault();
+
+        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+
+        request("PUT", "/api/my/user/password", passwordForm)
+            .then(() => {
+                alert("Password updated");
+                setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
+            })
+            .catch(() => alert("Password change failed"));
+    };
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
@@ -109,10 +117,10 @@ export default function MySettings(props) {
                                 <Col sm={4}><InputGroup.Text id="basic-addon1" className="text-center"> First
                                     Name </InputGroup.Text></Col>
                                 <Col sm={8}><FormControl className="sm-5 text-center"
-                                                         placeholder={user.firstName}
+                                                         value={formData.firstName}
                                                          area-label="firstName"
                                                          aria-describedby="basic-addon1"
-                                                         disabled={true}/></Col>
+                                                         readOnly={true}/></Col>
                             </InputGroup>
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={4}>
@@ -120,10 +128,10 @@ export default function MySettings(props) {
                                 </Col>
                                 <Col sm={8}>
                                     <FormControl className="sm-5 text-center"
-                                                 placeholder={user.lastName}
+                                                 value={formData.lastName}
                                                  area-label="lastName"
                                                  aria-describedby="basic-addon2"
-                                                 disabled={true}/>
+                                                 readOnly={true}/>
                                 </Col>
                             </InputGroup>
                             <InputGroup className="col-sm-12 mt-3">
@@ -132,10 +140,10 @@ export default function MySettings(props) {
                                 </Col>
                                 <Col sm={8}>
                                     <FormControl className="sm-5 text-center"
-                                                 placeholder={user.login}
+                                                 value={formData.login}
                                                  area-label="lastName"
                                                  aria-describedby="basic-addon3"
-                                                 disabled={true}/>
+                                                 readOnly={true}/>
                                 </Col>
                             </InputGroup>
                             <InputGroup className="col-sm-12 mt-3">
@@ -144,38 +152,14 @@ export default function MySettings(props) {
                                 </Col>
                                 <Col sm={8}>
                                     <FormControl className="sm-5 text-center"
-                                                 placeholder={user.role}
+                                                 value={formData.role}
                                                  area-label="lastName"
                                                  aria-describedby="basic-addon4"
-                                                 disabled={true}/>
+                                                 readOnly={true}/>
                                 </Col>
                             </InputGroup>
                         </Col>
                         <Col sm={6}>
-                            <InputGroup className="col-sm-12 mt-3">
-                                <Col sm={8}><FormControl className="sm-5 text-center"
-                                                         placeholder="**********"
-                                                         type="password"
-                                                         name="passowrd"
-                                                         // value={formData.password}
-                                                         area-label="password"
-                                                         aria-describedby="basic-addon5"
-                                                         onChange={handleChanges}/>
-                                </Col>
-                                <Col sm={4}><InputGroup.Text id="basic-addon5"
-                                                             className="text-center"> Password </InputGroup.Text></Col>
-                            </InputGroup>
-                            <InputGroup className="col-sm-12 mt-3">
-                                <Col sm={8}><FormControl className="sm-5 text-center"
-                                                         type="password"
-                                                         placeholder="**********"
-                                                         area-label="Confirm Password"
-                                                         aria-describedby="basic-addon6"
-                                                         onChange={handleChanges}/>
-                                </Col>
-                                <Col sm={4}><InputGroup.Text id="basic-addon6" className="text-center"> Confirm
-                                    Password </InputGroup.Text></Col>
-                            </InputGroup>
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={8}><FormControl className="sm-5 text-center"
                                                          placeholder={user.emailAddress}
@@ -237,7 +221,6 @@ export default function MySettings(props) {
                                 <Col sm={6}>
                                     <InputGroup className="col-sm-12 mt-3">
                                         <Col sm={8}><FormControl className="sm-5 text-center"
-                                                                 placeholder={user.city}
                                                                  value={formData.city}
                                                                  area-label="city"
                                                                  name="city"
@@ -250,7 +233,6 @@ export default function MySettings(props) {
                                     <InputGroup className="col-sm-12 mt-3">
                                         <Col sm={8}><FormControl className="sm-5 text-center"
                                                                  value={formData.country}
-                                                                 placeholder={user.country}
                                                                  area-label="country"
                                                                  name="country"
                                                                  aria-describedby="basic-addon10"
@@ -268,6 +250,33 @@ export default function MySettings(props) {
                             </div>
                         </Col>
 
+                    </form>
+
+                    <form action="sumbit">
+                        <InputGroup className="col-sm-12 mt-3">
+                                <Col sm={8}><FormControl className="sm-5 text-center"
+                                                         value={e=>setPasswordForm(e.target.value)}
+                                                         type="password"
+                                                         name="passowrd"
+                                                         // value={formData.password}
+                                                         area-label="password"
+                                                         aria-describedby="basic-addon5"
+                                                         onChange={handleChanges}/>
+                                </Col>
+                                <Col sm={4}><InputGroup.Text id="basic-addon5"
+                                                             className="text-center"> Password </InputGroup.Text></Col>
+                            </InputGroup>
+                            <InputGroup className="col-sm-12 mt-3">
+                                <Col sm={8}><FormControl className="sm-5 text-center"
+                                                         type="password"
+                                                         placeholder="**********"
+                                                         area-label="Confirm Password"
+                                                         aria-describedby="basic-addon6"
+                                                         onChange={handleChanges}/>
+                                </Col>
+                                <Col sm={4}><InputGroup.Text id="basic-addon6" className="text-center"> Confirm
+                                    Password </InputGroup.Text></Col>
+                            </InputGroup>
                     </form>
                 </Col>
             </section>

@@ -57,9 +57,7 @@ export default function Dashboard(props) {
                                     {/*<NoDataMessage message="No available projects or you dont have access to view.."/>*/}
                                     No available projects or you dont have access to view..
                                 </td>
-
                             </tr>
-
                         ) : (
                             projects.map(project => {
                                 return (
@@ -79,9 +77,7 @@ export default function Dashboard(props) {
                                         <td>{project.owner}</td>
                                         <td>{project.status}</td>
                                     </tr>
-                                )
-
-                            })
+                                )})
                         )}
                         </tbody>
                     </table>

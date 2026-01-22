@@ -1,8 +1,6 @@
 package crm.demo.Components;
 
-import crm.demo.DTOs.CurrentUserDTO;
-import crm.demo.DTOs.CurrentUserUpdateDto;
-import crm.demo.DTOs.CustomerDTO;
+import crm.demo.DTOs.*;
 import crm.demo.Enteties.CrmUser;
 import crm.demo.Enteties.Customer;
 import crm.demo.Enteties.Project;
@@ -28,12 +26,12 @@ public class CRMUserComponent {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("users")
-    public List<CurrentUserUpdateDto> usersList(){
+    public List<UserByIDDTO> usersList(){
         return userRepository.findAll()
                 .stream()
                 .map(user -> {
                     Customer customer = user.getCustomer();
-                    return new CurrentUserUpdateDto(
+                    return new UserByIDDTO(
                             user.getId(),
                             user.getFirstName(),
                             user.getLastName(),
@@ -67,10 +65,10 @@ public class CRMUserComponent {
     }
 
     @GetMapping("users/{id}")
-    public CurrentUserUpdateDto getUserById(@PathVariable Long id){
+    public UserByIDDTO getUserById(@PathVariable Long id){
         CrmUser user = userRepository.findById(id).orElseThrow(()->new RuntimeException(" There is no user with such id -  "+id));
         Customer customer = user.getCustomer();
-        return new  CurrentUserUpdateDto(
+        return new  UserByIDDTO(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -110,50 +108,47 @@ public class CRMUserComponent {
     @Transactional
     @PutMapping("my/user")
     public CurrentUserUpdateDto updateUser(Authentication authentication, @RequestBody CurrentUserUpdateDto dto){
-        String login = authentication.getName();
-        CrmUser user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        CrmUser user = userRepository.findByLogin(authentication.getName())
+                .orElseThrow();
 
-        Customer customer = user.getCustomer();
-
-        // Update user fields
         if (dto.firstName() != null) user.setFirstName(dto.firstName());
         if (dto.lastName() != null) user.setLastName(dto.lastName());
         if (dto.emailAddress() != null) user.setEmailAddress(dto.emailAddress());
-        if (dto.login() != null) user.setLogin(dto.login());
         if (dto.address() != null) user.setAddress(dto.address());
         if (dto.city() != null) user.setCity(dto.city());
         if (dto.country() != null) user.setCountry(dto.country());
         if (dto.phoneNumber() != null) user.setPhoneNumber(dto.phoneNumber());
 
-        // Update customer fields
-        if (dto.customerDTO() != null && dto.customerDTO().nickName() != null) {
-                customer.setNickName(dto.customerDTO().nickName());
-            // save customer if needed, or cascade will do it
+        Customer customer = user.getCustomer();
+        if (customer == null) {
+            customer = new Customer();
+            user.setCustomer(customer);
         }
 
-        userRepository.save(user); // Persis
+        if (dto.customer() != null && dto.customer().nickName() != null) {
+            customer.setNickName(dto.customer().nickName());
+        }
 
-        // Return updated DTO to frontend (transform user to CurrentUserDTO)
-        return new CurrentUserUpdateDto(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmailAddress(),
-                user.getLogin(),
-                user.getAddress(),
-                user.getCity(),
-                user.getCountry(),
-                user.getPhoneNumber(),
-                user.getIsBlocked(),
-                user.getRole().name(),
-                user.getIsActive(),
-                user.getIsAccountExpired(),
-                new CustomerDTO(
-                        customer.getId(),
-                        customer.getNickName()
-                )
-        );
+        return CurrentUserUpdateDto.from(user);
+    }
+
+    @PutMapping("/my/password")
+    public void changePassword(
+            Authentication auth,
+            @RequestBody ChangePasswordRequest dto
+    ) {
+        CrmUser user = userRepository.findByLogin(auth.getName())
+                .orElseThrow();
+
+        if (!passwordEncoder.matches(dto.oldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        if (!dto.newPassword().equals(dto.confirmPassword())) {
+            throw new RuntimeException("Passwords do not match");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
     }
 
     @PostMapping("user-add")
