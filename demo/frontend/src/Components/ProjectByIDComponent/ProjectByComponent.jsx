@@ -22,11 +22,11 @@ export default function ProjectByComponent() {
     const [projectForm, setProjectForm] = useState({
         projectName: "",
         deadLine: "",
-        ownerId: "",
+        ownerId: null,
         statusCode: "",
         budget: 0,
-        cityId: "",          // City id for select (read-only now)
-        beneficiaryId: "",
+        cityId: null,          
+        beneficiaryId: null,
     });
     const [statusList, setStatusList] = useState([]);
     const [cities, setCities] = useState([]);           // For city select if needed
@@ -135,17 +135,16 @@ export default function ProjectByComponent() {
     }
     const handleUpdateProject = async (projectId) => {
         try {
-            const res = await axios.put(
-                `http://localhost:8080/api/project-update/${projectId}`,
-                projectForm,
-                {headers: {Authorization: `Bearer ${token}`}}
-            );
+    const res = await axios.put(
+      `http://localhost:8080/api/project-update/${projectId}`,
+      projectForm,
+      { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-            console.log("Updated project:", res.data);
-            setProject(res.data); // update local state
-        } catch (err) {
-            console.error("Failed to update project", err);
-        }
+        setProject(res.data);
+    } catch (err) {
+    console.error(err);
+  }
     };
     const userRole = currentUser?.role;
     console.log(currentUser)
@@ -158,6 +157,8 @@ export default function ProjectByComponent() {
             .then(res => {
                 setProject(res.data)
                 setLoading(false)
+                console.log("this is the project got by ID")
+                console.log(res.data)
             })
             .catch(err => {
                 console.error(err);
@@ -165,6 +166,18 @@ export default function ProjectByComponent() {
                 setLoading(false);
             });
     }, [id]);
+    useEffect(()=>{
+        if(!project) return;
+        setProjectForm({
+        projectName: project.projectName ?? "",
+        deadLine: project.deadLine ??"",
+        ownerId: project.ownerId ?? null,
+        statusCode: project.statusName ?? "",
+        budget: project.budget ?? 0,
+        cityId: project.cityId ?? null,  
+        beneficiaryId: project.beneficiaryId ?? null,
+        })
+    }, [project])
     if (error) return <p>{error}</p>;
     if (!project) return <p>Loading...</p>;
     return (
@@ -173,7 +186,10 @@ export default function ProjectByComponent() {
             <PageName name={"Project " + project.projectName + " details"}/>
             <section className="row justify-content-center mb-4">
                 <Col className="container-shadow mt-4" xs={9}>
-                    <form onSubmit={handleUpdateProject} className="row">
+                    <form onSubmit={(e)=>{
+                        e.preventDefault();
+                        handleUpdateProject(id)
+                    }} className="row">
                         <Col sm={6}>
                             {/* Project Name */}
                             <InputGroup className="col-sm-12 mt-3">
@@ -182,6 +198,7 @@ export default function ProjectByComponent() {
                                 </Col>
                                 <Col sm={8}>
                                     <FormControl
+                                    className="text-center"
                                         name="projectName"
                                         value={projectForm.projectName}
                                         onChange={handleChanges}
@@ -224,11 +241,13 @@ export default function ProjectByComponent() {
                                     <Form.Select
                                         name="ownerId"
                                         value={projectForm.ownerId}
-                                        onChange={handleChanges}
-                                        disabled={!canEditProject}
-                                        className="text-center"
+                                        onChange={canEditProject ? handleChanges : undefined}
+                                        style={{
+                                            pointerEvents: canEditProject ? "auto" : "none",
+                                            backgroundColor: canEditProject ? "white" : "#f8f9fa",
+                                        }}
                                     >
-                                        <option value="">Select Owner</option>
+                                        <option value={project.ownerId}>{project.ownerName}</option>
                                         {customers.map(customer => (
                                             <option key={customer.id} value={customer.id}>
                                                 {customer.nickName}
@@ -248,10 +267,9 @@ export default function ProjectByComponent() {
                                         name="statusCode"
                                         value={projectForm.statusCode}
                                         onChange={handleChanges}
-                                        disabled={!canEditProject}
                                         className="text-center"
                                     >
-                                        <option value="">Select Status</option>
+                                        <option value="">{project.statusName}</option>
                                         {statusList.map(status => (
                                             <option key={status.id} value={status.code}>
                                                 {status.displayName}
@@ -271,13 +289,16 @@ export default function ProjectByComponent() {
                                     <Form.Select
                                         name="cityId"
                                         value={projectForm.cityId}
-                                        disabled
-                                        className="text-center"
+                                        onChange={canEditProject ? handleChanges : undefined}
+                                        style={{
+                                            pointerEvents: canEditProject ? "auto" : "none",
+                                            backgroundColor: canEditProject ? "white" : "#f8f9fa",
+                                        }}
                                     >
                                         {cities.length > 0 ? (
                                             cities.map(city => (
-                                                <option key={city.id} value={city.id}>
-                                                    {city.name}
+                                                <option key={city.cityId} value={city.cityId}>
+                                                    {city.city}
                                                 </option>
                                             ))
                                         ) : (
@@ -297,17 +318,20 @@ export default function ProjectByComponent() {
                                     <Form.Select
                                         name="beneficiaryId"
                                         value={projectForm.beneficiaryId}
-                                        disabled
-                                        className="text-center"
+                                        onChange={canEditProject ? handleChanges : undefined}
+                                        style={{
+                                            pointerEvents: canEditProject ? "auto" : "none",
+                                            backgroundColor: canEditProject ? "white" : "#f8f9fa",
+                                        }}
                                     >
                                         {beneficiaries.length > 0 ? (
                                             beneficiaries.map(b => (
                                                 <option key={b.id} value={b.id}>
-                                                    {b.name || b.nickName}
+                                                    {b.companyName || b.nickName}
                                                 </option>
                                             ))
                                         ) : (
-                                            <option>{project.beneficiary?.nickName || "No beneficiary"}</option>
+                                            <option>{project.companyName || "No beneficiary"}</option>
                                         )}
                                     </Form.Select>
                                 </Col>
@@ -323,12 +347,14 @@ export default function ProjectByComponent() {
                                         name="budget"
                                         type="number"
                                         value={projectForm.budget}
-                                        onChange={e =>
-                                            canEditBudget &&
-                                            setProjectForm(prev => ({
-                                                ...prev,
-                                                budget: Number(e.target.value),
-                                            }))
+                                        onChange={
+                                            canEditBudget
+                                            ? (e) =>
+                                                setProjectForm((prev) => ({
+                                                    ...prev,
+                                                    budget: Number(e.target.value),
+                                                }))
+                                            : undefined
                                         }
                                         readOnly={!canEditBudget}
                                         style={{
@@ -353,7 +379,7 @@ export default function ProjectByComponent() {
                         </Col>
 
                         <Col sm={12} className="d-grid gap-2 mt-5 justify-content-center">
-                            <Button variant="outline-primary" size="lg" type="submit" disabled={!canEditProject}>
+                            <Button variant="outline-primary" size="lg" type="submit">
                                 Update Project
                             </Button>
                         </Col>
@@ -388,7 +414,6 @@ export default function ProjectByComponent() {
                             <Col xs={9}>
                                 <Form.Control
                                     as="textarea"
-                                    placeholder="type your message..."
                                     rows={3}
                                     className="no-resize shadow"
                                     value={messageText}
@@ -406,7 +431,7 @@ export default function ProjectByComponent() {
                                 <Button
                                     variant="outline-primary"
                                     size="lg"
-                                    disabled={!messageText.trim()}
+                                    readOnly={!messageText.trim()}
                                     onClick={sendMessage}
                                 >
                                     Send

@@ -36,9 +36,9 @@ public class ProjectComponent {
     }
 
     @GetMapping("project/{id}")
-    public ProjectByIdDto getProjectById(@PathVariable Long id, Principal principal) {
+    public ProjectByIdDto getProjectById(@PathVariable Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("No Project with such ID " + id));
-        return ProjectByIdDto.from(project, principal.getName());
+        return ProjectByIdDto.from(project);
     }
 
     @PostMapping("project-add")
@@ -150,7 +150,7 @@ public class ProjectComponent {
             log.setProject(savedProject);
             log.setUser(project.getOwner()); // owner is new owner now
             log.setLogDateTime(LocalDate.now());
-            log.setLogText("Project updated: " + changes.toString());
+            log.setLogText("Project updated: " + changes.toString() + " by " + principal.getName());
             logsRepository.save(log);
         }
 

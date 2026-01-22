@@ -16,10 +16,12 @@ public record ProjectByIdDto(
         Long ownerId,
         String ownerName,
         Long beneficiaryId,
+        String companyName,
         Long cityId,
+        String city,
         Long budget
 ) {
-    public static ProjectByIdDto from(Project project, String requestedBy) {
+    public static ProjectByIdDto from(Project project) {
         return new ProjectByIdDto(
                 project.getId(),
                 project.getProjectName(),
@@ -31,7 +33,9 @@ public record ProjectByIdDto(
                 project.getOwner().getId(),
                 project.getOwner().getNickName(),
                 project.getBeneficiary().getId(),
+                project.getBeneficiary().getCompanyName(),
                 project.getCity().getId(),
+                project.getCity().getCity(),
                 project.getBudget()
         );
     }
