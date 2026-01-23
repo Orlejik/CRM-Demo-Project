@@ -121,15 +121,11 @@ export default props => {
         navigate(`/project/${projectId}`); // make sure you have this route in React Router
     };
 
-    // Navigate to edit page
-    const handleEditProj = (projectId) => {
-        navigate(`/project/${projectId}/edit`); // edit page route
-    };
     const handleDeleteProj = async (projId) => {
         if (!window.confirm("Are you sure you want to delete this Project?")) return;
 
         try {
-            await request("DELETE", `/api/project/${projId}`);
+            await request("DELETE", `/api/project-delete/${projId}`);
             // Remove from state
             setCrmUsers((prev) => prev.filter((u) => u.id !== projId));
         } catch (err) {

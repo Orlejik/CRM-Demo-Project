@@ -34,7 +34,7 @@ public class ProjectMessages {
     @Column(name = "message_author")
     String author;
 
-    @Column (name = "date-time")
+    @Column (name = "message_date")
     LocalDate messageDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

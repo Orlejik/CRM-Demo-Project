@@ -66,7 +66,9 @@ public class SecurityConfig {
                                 "/api/logs/**",
                                 "/api/messages/**"
                         ).authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/project-delete/**", "/api/**").authenticated()
                         .requestMatchers(
                                 "/api/project/**",
                                 "/api/project-messages/project/*/post-messages",

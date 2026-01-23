@@ -24,6 +24,7 @@ public class ProjectComponent {
     private final LogsRepository logsRepository;
     private final BenefeciaryRepository benefeciaryRepository;
     private final CitiesRepository citiesRepository;
+    private final ProjectMessagesRepository projectMessagesRepository;
     @GetMapping("projects")
     public List<ProjectDTO> listAllProjects() {
 
@@ -172,6 +173,7 @@ public class ProjectComponent {
 
     @DeleteMapping("project-delete/{id}")
     public void deleteById(@PathVariable Long id) {
+
         projectRepository.deleteById(id);
     }
 

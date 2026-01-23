@@ -11,21 +11,45 @@ export default function UserDetails() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName:"",
-        role: "",
-        emailAddress:  "",
-        login: "",
-        address: "",
-        city: "",
-        country: "",
-        nickName: "",
-        phoneNumber: "",
-        isLocked: false,
-        isActive: true,
-        isAccountExpired: false
-    })
+    const [formData, setFormData] = useState()
+    // const [formData, setFormData] = useState({
+    //     firstName: "",
+    //     lastName:"",
+    //     role: "",
+    //     emailAddress:  "",
+    //     login: "",
+    //     address: "",
+    //     city: "",
+    //     country: "",
+    //     nickName: "",
+    //     phoneNumber: "",
+    //     isLocked: false,
+    //     isActive: true,
+    //     isAccountExpired: false
+    // })
+
+    useEffect(()=>{
+        if(user){
+            setFormData({
+                firstName: user.firstName ?? "",
+            lastName: user.lastName ?? "",
+            role: user.role ?? "",
+            emailAddress: user.emailAddress ?? "",
+            login: user.login ?? "",
+            address: user.address ?? "",
+            city: user.city ?? "",
+            country: user.country ?? "",
+            phoneNumber: user.phoneNumber ?? "",
+            nickName: user.customerDTO?.nickName ?? "",
+            isLocked: user.isLocked ?? false,
+            isActive: user.isActive ?? true,
+            isAccountExpired: user.isAccountExpired ?? false
+            });
+            setIsActive(user.isActive);
+        setIsLocked(user.isLocked);
+        setIsAccountExp(user.isAccountExpired);
+        }
+    }, [user])
     useEffect(() => {
         if (user) {
             setIsActive(user.isActive);
@@ -58,7 +82,6 @@ export default function UserDetails() {
         const payload = {
             firstName: formData.firstName,
             lastName: formData.lastName,
-            password: formData.password, // optional
             emailAddress: formData.emailAddress,
             login: formData.login,
             address: formData.address,
@@ -182,7 +205,7 @@ export default function UserDetails() {
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={8}><FormControl className="sm-5 text-center"
                                                          placeholder={user.emailAddress}
-                                                         value={formData.emailAddress}
+                                                        //  value={formData.emailAddress}
                                                          area-label="emailAddress"
                                                          name="emailAddress"
                                                          aria-describedby="basic-addon7"
@@ -196,7 +219,7 @@ export default function UserDetails() {
                             <InputGroup className="col-sm-12 mt-3">
                                 <Col sm={8}><FormControl className="sm-5 text-center"
                                                          placeholder={user.address}
-                                                         value={formData.address}
+                                                        //  value={formData.address}
                                                          name="address"
                                                          area-label="address"
                                                          aria-describedby="basic-addon8"
@@ -216,7 +239,7 @@ export default function UserDetails() {
                                             Number </InputGroup.Text></Col>
                                         <Col sm={8}><FormControl className="sm-5 text-center"
                                                                  placeholder={user.phoneNumber}
-                                                                 value={formData.phoneNumber}
+                                                                //  value={formData.phoneNumber}
                                                                  name="phoneNumber"
                                                                  area-label="phoneNumber"
                                                                  aria-describedby="basic-addon11"
@@ -228,8 +251,8 @@ export default function UserDetails() {
                                                                      className="text-center"> Customer
                                             Name </InputGroup.Text></Col>
                                         <Col sm={8}><FormControl className="sm-5 text-center"
-                                                                 placeholder={user.customerDTO.nickName}
-                                                                 value={formData.nickName}
+                                                                 placeholder={user.customerDTO?.nickName}
+                                                                //  value={formData.nickName}
                                                                  name="nickName"
                                                                  area-label="nickName"
                                                                  aria-describedby="basic-addon12"
@@ -241,7 +264,7 @@ export default function UserDetails() {
                                     <InputGroup className="col-sm-12 mt-3">
                                         <Col sm={8}><FormControl className="sm-5 text-center"
                                                                  placeholder={user.city}
-                                                                 value={formData.city}
+                                                                //  value={formData.city}
                                                                  area-label="city"
                                                                  name="city"
                                                                  aria-describedby="basic-addon9"
@@ -252,7 +275,7 @@ export default function UserDetails() {
                                     </InputGroup>
                                     <InputGroup className="col-sm-12 mt-3">
                                         <Col sm={8}><FormControl className="sm-5 text-center"
-                                                                 value={formData.country}
+                                                                //  value={formData.country}
                                                                  placeholder={user.country}
                                                                  area-label="country"
                                                                  name="country"

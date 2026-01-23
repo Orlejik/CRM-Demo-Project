@@ -85,7 +85,7 @@ export default function CreateNewProject(props) {
     };
         const handleSubmit = async () => {
             try{
-                await request("POST", `/api/api/project-add`, formData)
+                await request("POST", `/api/project-add`, formData)
                 navigate("/dashboard")
             }
             catch(err){
