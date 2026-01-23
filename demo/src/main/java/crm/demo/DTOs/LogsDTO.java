@@ -1,7 +1,6 @@
 package crm.demo.DTOs;
 
 import crm.demo.Enteties.Logs;
-
 import java.time.LocalDate;
 
 public record LogsDTO(

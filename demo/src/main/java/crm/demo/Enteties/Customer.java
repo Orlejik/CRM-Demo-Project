@@ -20,7 +20,6 @@ public class Customer {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @Column(unique = false)
     @NotBlank
     String nickName;

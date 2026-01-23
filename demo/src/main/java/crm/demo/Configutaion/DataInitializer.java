@@ -94,7 +94,6 @@ public class DataInitializer implements ApplicationRunner {
             return statusRepository.save(s);
         });
     }
-
     private void createCitiesIfNotExists(String city){
         cityRepository.findByCity(city).orElseGet(()->
                 {
@@ -103,7 +102,6 @@ public class DataInitializer implements ApplicationRunner {
                     return cityRepository.save(c);
                 });
     }
-
     private void createBenefeciaryIfNotExists(String name, String company){
         benefeciaryRepository.findByCompanyName(company).orElseGet(()->
         {

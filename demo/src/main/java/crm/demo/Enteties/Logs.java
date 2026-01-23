@@ -22,7 +22,6 @@ public class Logs {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @JoinColumn(name = "customer_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     Customer user;

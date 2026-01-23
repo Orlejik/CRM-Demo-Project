@@ -25,7 +25,6 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
     private final CrmUserRepository userRepository;
-
     /**
      * Регистрация пользователя
      *

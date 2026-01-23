@@ -10,7 +10,6 @@ public record ProjectMessageDTO(
         String author,
         LocalDate messageDate
 ) {
-
     public static ProjectMessageDTO from(ProjectMessages projectMessages){
         return new ProjectMessageDTO(
                 projectMessages.getId(),

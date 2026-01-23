@@ -9,7 +9,6 @@ public class GetClientIP {
         if(headers !=null && !headers.isEmpty() ){
             return headers.split(",")[0].trim();
         }
-
         return request.getRemoteAddr();
     }
 }

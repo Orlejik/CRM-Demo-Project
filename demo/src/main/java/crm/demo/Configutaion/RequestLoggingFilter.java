@@ -18,7 +18,6 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         String ip = GetClientIP.getClientIP(httpRequest);
         String method = httpRequest.getMethod();
         String uri = httpRequest.getRequestURI();
-
         System.out.printf(
                 "Request %s %s from %s%n",
                 method,

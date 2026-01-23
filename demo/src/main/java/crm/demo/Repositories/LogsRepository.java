@@ -14,7 +14,4 @@ public interface LogsRepository extends JpaRepository<Logs, Long>{
     List<Logs> findByUserId(Long id);
     List<Logs> findByProjectId(Long id);
     void deleteById(Long id);
-
-
-    
 }

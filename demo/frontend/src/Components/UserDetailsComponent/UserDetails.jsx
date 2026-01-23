@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 import PageName from "../Pagename/PageName";
 import {Button, Col, FormControl, InputGroup, Row, Form} from "react-bootstrap";
-
 export default function UserDetails() {
     const { id } = useParams();
     const [isActive, setIsActive] = useState(false);

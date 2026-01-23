@@ -10,7 +10,6 @@ import crm.demo.Enteties.Customer;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long>{
-
     public List<Customer> findAll();
     public Optional<Customer> findById(Long id);
     

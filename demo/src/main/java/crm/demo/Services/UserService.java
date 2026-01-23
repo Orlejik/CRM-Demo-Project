@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final CrmUserRepository userRepository;
-
     /**
      * Сохранение пользователя
      *

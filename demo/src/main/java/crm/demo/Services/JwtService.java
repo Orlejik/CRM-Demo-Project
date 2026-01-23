@@ -20,7 +20,6 @@ import java.util.Date;
 public class JwtService {
     @Value("${security.jwt.token.secret}")
     private String secret;
-
     @Value("${security.jwt.token.access-expiration}")
     private long accessExpiration;
 

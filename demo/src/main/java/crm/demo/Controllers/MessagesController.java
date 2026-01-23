@@ -18,6 +18,5 @@ public class MessagesController {
     @GetMapping("/messages")
     public ResponseEntity<List<String>> getMessages() {
         return ResponseEntity.ok(Arrays.asList("first", "second"));
-
     }
 }

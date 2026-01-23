@@ -25,7 +25,6 @@ public class Project {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @Column
     String projectName;
 

@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface CrmUserRepository extends JpaRepository<CrmUser, Long>{
     boolean existsByLogin(String login);
 //    boolean existsByEmailAddress(String emailAddress);
-
     List<CrmUser> findAll();
 
     CrmUser findByFirstName(String name);

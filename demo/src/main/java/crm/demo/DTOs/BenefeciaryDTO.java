@@ -7,7 +7,6 @@ public record BenefeciaryDTO(
         String benificiatyFirstName,
         String companyName
 ) {
-
     public static BenefeciaryDTO from(Beneficiary beneficiary) {
         return new BenefeciaryDTO(
                 beneficiary.getId(),

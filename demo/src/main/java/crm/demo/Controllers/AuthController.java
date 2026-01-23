@@ -40,7 +40,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationService service;
-
     @PostMapping("/register")
     public ResponseEntity<JwtAuthenticationResponse> register(
             @RequestBody @Valid SignUpDto dto

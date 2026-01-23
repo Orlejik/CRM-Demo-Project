@@ -24,7 +24,6 @@ public class CrmUser implements UserDetails {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    
     @Column
     String firstName;
     

@@ -44,41 +44,41 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests((authorize) -> authorize
-                                .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
-                                .requestMatchers(HttpMethod.GET,
-                                        "/api/my/**",
-                                        "/api/status",
-                                        "/api/customers",
-                                        "/api/config",
-                                        "/api/projects",
-                                        "/api/project-messages/project/*/get-messages",
-                                        "/api/users",
-                                        "/api/project-messages",
-                                        "/api/users/**",
-                                        "/api/project-messages/project/*",
-                                        "/api/project-messages/**",
-                                        "/api/projects/**",
-                                        "/api/current-user",
-                                        "/api/logs/by-project/**",
-                                        "/api/benefeciaries",
-                                        "/api/cities",
-                                        "/api/logs/**",
-                                        "/api/messages/**"
-                                        ).authenticated()
-                                .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
-                                .requestMatchers(
-                                        "/api/project/**",
-                                        "/api/project-messages/project/*/post-messages",
-                                        "/api/my/**",
-                                        "/api/project-update/*"
-                                ).authenticated()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/my/**",
+                                "/api/status",
+                                "/api/customers",
+                                "/api/config",
+                                "/api/projects",
+                                "/api/project-messages/project/*/get-messages",
+                                "/api/users",
+                                "/api/project-messages",
+                                "/api/users/**",
+                                "/api/project-messages/project/*",
+                                "/api/project-messages/**",
+                                "/api/projects/**",
+                                "/api/current-user",
+                                "/api/logs/by-project/**",
+                                "/api/benefeciaries",
+                                "/api/cities",
+                                "/api/logs/**",
+                                "/api/messages/**"
+                        ).authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                        .requestMatchers(
+                                "/api/project/**",
+                                "/api/project-messages/project/*/post-messages",
+                                "/api/my/**",
+                                "/api/project-update/*"
+                        ).authenticated()
                 )
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -103,13 +103,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "localhost"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        System.out.println("____________________________________________ SOURCE _____________________________________________________");
+        System.out.println(source);
+        System.out.println("____________________________________________ CONFIGURATION _____________________________________________________");
+        System.out.println(configuration);
         return source;
     }
 

@@ -7,7 +7,6 @@ export default function Buttons(props) {
                 <button className="btn btn-primary" style={{margin: '10px'}} onClick={props.login}>Login</button>
                 <button className="btn btn-black" style={{margin: '10px'}} onClick={props.logout}>Logout</button>
             </div>
-
         </div>
     )
 }

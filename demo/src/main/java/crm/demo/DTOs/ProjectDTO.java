@@ -18,7 +18,6 @@ public record ProjectDTO(
         Long budget
 
 ) {
-
     public static ProjectDTO from(Project project){
         return new ProjectDTO(
                 project.getId(),

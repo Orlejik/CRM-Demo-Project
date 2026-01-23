@@ -19,7 +19,6 @@ public class ProjectUpdateDTO{
     private String statusName;
     private Long ownerId;
     private String ownerName;
-
     public static ProjectUpdateDTO from(Project project) {
         ProjectUpdateDTO dto = new ProjectUpdateDTO();
         dto.id = project.getId();

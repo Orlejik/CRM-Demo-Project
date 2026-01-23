@@ -4,10 +4,8 @@ import PageName from "../Pagename/PageName";
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 import {Button, Col, Form, FormControl, InputGroup, OverlayTrigger, Row, Tooltip} from "react-bootstrap";
 import "./ProjectByIdComponent.css"
-import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 export default function ProjectByComponent() {
-    const token = localStorage.getItem("token");
     const {id} = useParams();
     const [project, setProject] = useState(null);
     const [error, setError] = useState(null);
@@ -15,6 +13,7 @@ export default function ProjectByComponent() {
     const [logs, setLogs] = useState([])
     const [customers, setCustomers] = useState([]);
     const [formData, setFormData] = useState({})
+    const navigate = useNavigate();
     const [status, setStatus] = useState([]);
     const [messages, setMessages] = useState([]);
     const [messageText, setMessageText] = useState("");
@@ -133,19 +132,19 @@ export default function ProjectByComponent() {
 
         }
     }
-    const handleUpdateProject = async (projectId) => {
-        try {
-    const res = await axios.put(
-      `http://localhost:8080/api/project-update/${projectId}`,
-      projectForm,
-      { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const handleUpdateProject = async (projectId) => {
+              try{
+                  await request("PUT", `/api/project-update/${projectId}`, projectForm)
+                  navigate("/dashboard")
+              }
+              catch(err){
+                  console.log(err)
+              }
+        };
 
-        setProject(res.data);
-    } catch (err) {
-    console.error(err);
-  }
-    };
+
+
+    
     const userRole = currentUser?.role;
     console.log(currentUser)
     console.log(userRole)

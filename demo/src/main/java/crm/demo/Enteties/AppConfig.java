@@ -14,7 +14,6 @@ public class AppConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String siteName;
     private String defaultLanguage;
     private String theme;

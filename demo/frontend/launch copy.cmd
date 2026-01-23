@@ -6,8 +6,8 @@ echo SYSTEM BOOTSTRAP
 echo ==================================================
 REM ==================================================
 REM START FRONTEND
-REM--------------------------------------------------
 REM ==================================================
+
 echo Starting React frontend...
 cd /d "%ROOT_DIR%\demo\frontend" || exit /b 1
 start "React Frontend" cmd /k ^

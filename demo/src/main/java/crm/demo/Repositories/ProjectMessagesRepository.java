@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ProjectMessagesRepository extends JpaRepository<ProjectMessages, Long>{
-
     List<ProjectMessages> findAllByProjectId(Long id);
 }

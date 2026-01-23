@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-
-
 public record ProjectResponse(
         Long id,
         String projectName,

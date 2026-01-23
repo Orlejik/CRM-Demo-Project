@@ -7,8 +7,6 @@ import NoDataMessage from "../Messages/NoDataMessage";
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
-
-
 export default function Dashboard(props) {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);

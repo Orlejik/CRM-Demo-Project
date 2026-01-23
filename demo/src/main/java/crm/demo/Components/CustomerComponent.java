@@ -31,7 +31,6 @@ public class CustomerComponent {
                 .map(CustomerDTO::from)
                 .toList();
     }
-
     @GetMapping("customer/{id}")
     public Customer getCustomerById(@PathVariable Long id) {
         return customerRepository.findById(id).orElseThrow(()->new RuntimeException("No such id "+id));

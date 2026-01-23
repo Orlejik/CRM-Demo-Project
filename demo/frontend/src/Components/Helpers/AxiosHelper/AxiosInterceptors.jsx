@@ -1,6 +1,5 @@
 import axios from "axios";
 // import { useAuth } from "./../../../Security/AuthContext";
-
 export const setupAxiosInterceptors = (logout) => {
     axios.interceptors.response.use(
         res => res,

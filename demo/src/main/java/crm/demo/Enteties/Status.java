@@ -22,7 +22,6 @@ public class Status {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @Column(unique = true,  nullable = false)
     String code;
 

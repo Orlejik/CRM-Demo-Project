@@ -20,7 +20,6 @@ import java.util.List;
 public class BenefeciaryComponent {
     private final BenefeciaryRepository benefeciaryRepository;
     private final CitiesRepository cityRepository;
-
     @GetMapping("benefeciaries")
     public List<BenefeciaryDTO> getAllBenefeciaries(){
         return benefeciaryRepository.findAll()
@@ -28,7 +27,6 @@ public class BenefeciaryComponent {
                 .map(BenefeciaryDTO::from)
                 .toList();
     }
-
     @GetMapping("cities")
     public List<CityDTO> getAllCities(){
         return cityRepository.findAll()

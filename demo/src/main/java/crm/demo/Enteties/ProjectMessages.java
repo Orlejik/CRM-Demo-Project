@@ -24,7 +24,6 @@ public class ProjectMessages {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     Customer customersMessages;

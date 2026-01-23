@@ -23,7 +23,6 @@ public class StatusComponent {
                 .stream()
                 .map(StatusDTO::from)
                 .toList();
-
     }
 
 }

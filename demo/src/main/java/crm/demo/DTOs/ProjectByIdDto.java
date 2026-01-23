@@ -5,7 +5,6 @@ import crm.demo.Enteties.Project;
 import java.time.LocalDate;
 
 public record ProjectByIdDto(
-
         Long id,
         String projectName,
         String projectDescription,

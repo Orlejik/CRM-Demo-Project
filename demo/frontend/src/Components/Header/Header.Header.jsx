@@ -18,7 +18,6 @@ export default function Header(props) {
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
     }, []);
-
     return (
         <header className="header">
             <nav className="nav">

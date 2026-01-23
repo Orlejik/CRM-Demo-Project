@@ -7,7 +7,6 @@ import "./LogRegForm.css"
 
 export default function LoginRegisterForm() {
     const { login } = useAuth();
-
     const [active, setActive] = useState("login");
     const [form, setForm] = useState({
         firstName: "",

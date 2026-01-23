@@ -9,6 +9,5 @@ export default function ProtectedRoute(){
     if (!token || !user) {
         return <Navigate to="/login-register" replace />;
     }
-
     return <Outlet />;
 }

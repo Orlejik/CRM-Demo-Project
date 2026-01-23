@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class AppConfig {
-
     private String siteName = "My App";
     private String defaultLanguage = "en";
     private String theme = "light";

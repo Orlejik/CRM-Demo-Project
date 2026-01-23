@@ -29,7 +29,6 @@ public class ProjectMessagesComponent {
                 .map(ProjectMessageDTO::from)
                 .toList();
     }
-
     @GetMapping("project-messages/project/{projectId}/get-messages")
     public List<ProjectMessageDTO> getMessagesByProjectID(@PathVariable("projectId") Long projectId){
         return messagesRepository.findAllByProjectId(projectId)

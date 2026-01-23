@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import PageName from "../Pagename/PageName";
-import axios from "axios";
 import "./CreateNewProject.css"
 import {useNavigate} from "react-router-dom";
-import api from "./../Helpers/AxiosHelper/Axios"
 import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 
 
@@ -11,12 +9,10 @@ export default function CreateNewProject(props) {
 
     const [customers, setCustomers] = useState([]);
     const navigate = useNavigate();
-    const token = localStorage.getItem("token")
     const [benefeciaries, setBenefeciaries] = useState([]);
     const [cities, setCities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     // RANGE VALUE
     const handleBudgetChange = (event)=>{
         const newValue  = Number(event.target.value);
@@ -87,28 +83,15 @@ export default function CreateNewProject(props) {
             [name]: value
         }));
     };
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log(formData);
-        console.log(customers[0]);
-        try {
-
-            console.log(formData.createdOn)
-            const response = await axios.post(
-                "http://localhost:8080/api/project-add",
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            )
-            navigate("/dashboard")
-            console.log(formData);
-        } catch (error) {
-            console.log(error)
-        }
-    }
+        const handleSubmit = async () => {
+            try{
+                await request("POST", `/api/api/project-add`, formData)
+                navigate("/dashboard")
+            }
+            catch(err){
+                console.log(err)
+            }
+        };
 
     return (
         <div>

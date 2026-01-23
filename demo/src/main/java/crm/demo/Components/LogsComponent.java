@@ -22,7 +22,6 @@ public class LogsComponent {
                 .map(LogsDTO::from)
                 .toList();
     }
-
     @GetMapping("/by-user/{userId}")
     public List<Logs> getByUser(@PathVariable Long userId) {
         return logsRepository.findByUserId(userId);

@@ -24,7 +24,6 @@ import java.util.Map;
 public class CRMUserComponent {
     private final CrmUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
     @GetMapping("users")
     public List<UserByIDDTO> usersList(){
         return userRepository.findAll()
@@ -53,7 +52,6 @@ public class CRMUserComponent {
                 })
                 .toList(); // or .collect(Collectors.toList())
     }
-
     @GetMapping("/current-user")
     public CurrentUserDTO  getCurrentUser(Principal principal) {
         // You can use principal.getName() to get the username
@@ -63,7 +61,6 @@ public class CRMUserComponent {
 
         return CurrentUserDTO.from(user);
     }
-
     @GetMapping("users/{id}")
     public UserByIDDTO getUserById(@PathVariable Long id){
         CrmUser user = userRepository.findById(id).orElseThrow(()->new RuntimeException(" There is no user with such id -  "+id));
@@ -104,13 +101,11 @@ public class CRMUserComponent {
                  )
          );
     }
-
     @Transactional
     @PutMapping("my/user")
     public CurrentUserUpdateDto updateUser(Authentication authentication, @RequestBody CurrentUserUpdateDto dto){
         CrmUser user = userRepository.findByLogin(authentication.getName())
                 .orElseThrow();
-
         if (dto.firstName() != null) user.setFirstName(dto.firstName());
         if (dto.lastName() != null) user.setLastName(dto.lastName());
         if (dto.emailAddress() != null) user.setEmailAddress(dto.emailAddress());
@@ -118,20 +113,16 @@ public class CRMUserComponent {
         if (dto.city() != null) user.setCity(dto.city());
         if (dto.country() != null) user.setCountry(dto.country());
         if (dto.phoneNumber() != null) user.setPhoneNumber(dto.phoneNumber());
-
         Customer customer = user.getCustomer();
         if (customer == null) {
             customer = new Customer();
             user.setCustomer(customer);
         }
-
         if (dto.customer() != null && dto.customer().nickName() != null) {
             customer.setNickName(dto.customer().nickName());
         }
-
         return CurrentUserUpdateDto.from(user);
     }
-
     @PutMapping("/my/password")
     public void changePassword(
             Authentication auth,
@@ -139,18 +130,14 @@ public class CRMUserComponent {
     ) {
         CrmUser user = userRepository.findByLogin(auth.getName())
                 .orElseThrow();
-
         if (!passwordEncoder.matches(dto.oldPassword(), user.getPassword())) {
             throw new RuntimeException("Old password is incorrect");
         }
-
         if (!dto.newPassword().equals(dto.confirmPassword())) {
             throw new RuntimeException("Passwords do not match");
         }
-
         user.setPassword(passwordEncoder.encode(dto.newPassword()));
     }
-
     @PostMapping("user-add")
     public CrmUser postNewUser(@RequestBody CrmUser newUser){
         return userRepository.save(newUser);
@@ -159,7 +146,6 @@ public class CRMUserComponent {
     @PutMapping("user-edit/{id}")
     public CrmUser editUserByID(@RequestBody CrmUser newUser, @PathVariable Long id){
         CrmUser userToUpdate = userRepository.findById(id).orElseThrow(()->new RuntimeException(" There is no user with such id -  "+id));
-
         userToUpdate.setFirstName(newUser.getFirstName());
         userToUpdate.setLastName(newUser.getLastName());
         userToUpdate.setPassword(newUser.getPassword());
@@ -175,7 +161,6 @@ public class CRMUserComponent {
 
         return userRepository.save(userToUpdate);
     }
-
     @DeleteMapping("user-delete/{id}")
     public void deleteUserById(@PathVariable Long id){
         userRepository.deleteById(id);

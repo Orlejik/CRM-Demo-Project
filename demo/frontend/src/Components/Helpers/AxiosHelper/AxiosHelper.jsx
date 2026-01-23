@@ -13,7 +13,6 @@ export const request = (method, url, data) => {
     const headers = token
         ? { Authorization: `Bearer ${token}` }
         : {};
-
     return axios({
         method,
         url,

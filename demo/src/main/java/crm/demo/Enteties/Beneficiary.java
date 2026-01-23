@@ -18,7 +18,6 @@ public class Beneficiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @Column
     String benificiatyFirstName;
     @Column

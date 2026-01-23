@@ -35,7 +35,6 @@ public class SignUpDto {
     @Schema(description = "Password", example = "my_secret_password")
     @Size(max = 255, message = "Password should contain not more than 255 characters")
     private String password;
-
     private Boolean isActive=true;
     private Boolean isBlocked=false;
     private Boolean isAccountExpired=false;

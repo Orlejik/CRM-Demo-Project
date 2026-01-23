@@ -16,7 +16,6 @@ import {setupAxiosInterceptors} from "../Components/Helpers/AxiosHelper/AxiosInt
 import NotFound from "../Components/NotFoundComponent/NotFound";
 import UserDetails from "../Components/UserDetailsComponent/UserDetails";
 import ProjectByComponent from "../Components/ProjectByIDComponent/ProjectByComponent"
-
 function App() {
     const {logout} = useAuth();
     useEffect(() => {

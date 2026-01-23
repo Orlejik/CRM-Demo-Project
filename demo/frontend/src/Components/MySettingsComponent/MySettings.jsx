@@ -5,7 +5,6 @@ import PageName from "../Pagename/PageName";
 import {Button, Col, FormControl, InputGroup, Row} from "react-bootstrap";
 
 export default function MySettings(props) {
-
     const [user, setUser] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

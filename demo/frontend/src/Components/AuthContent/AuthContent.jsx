@@ -9,7 +9,6 @@ export default class AuthContent extends React.Component{
             data:[]
         }
     }
-
     componentDidMount() {
         request("GET", "/api/messages", {})
             .then((response) => {

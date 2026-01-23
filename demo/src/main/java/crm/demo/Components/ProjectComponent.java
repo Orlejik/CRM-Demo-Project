@@ -24,8 +24,6 @@ public class ProjectComponent {
     private final LogsRepository logsRepository;
     private final BenefeciaryRepository benefeciaryRepository;
     private final CitiesRepository citiesRepository;
-
-
     @GetMapping("projects")
     public List<ProjectDTO> listAllProjects() {
 

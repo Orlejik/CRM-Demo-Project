@@ -17,7 +17,6 @@ public class AppConfigController {
         return repository.findById(1L)
                 .orElseGet(() -> repository.save(new AppConfig(null, "My App", "en", "light", 20)));
     }
-
     @PutMapping("/config")
     public AppConfig updateConfig(@RequestBody AppConfig config) {
         config.setId(1L); // always keep one row

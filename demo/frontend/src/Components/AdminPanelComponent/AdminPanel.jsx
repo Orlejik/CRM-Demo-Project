@@ -6,7 +6,6 @@ import {request} from "../Helpers/AxiosHelper/AxiosHelper";
 import {Button} from "react-bootstrap";
 import NoDataMessage from "../Helpers/NoDataMessage";
 import {useNavigate, useParams} from "react-router-dom";
-
 export default props => {
     const [crmUsers, setCrmUsers] = useState([]);
     const [customers, setCustomers] = useState([]);
@@ -16,6 +15,8 @@ export default props => {
     const [config, setConfig] = useState([])
     const [projects, setProjects] = useState([])
     const {projectId} = useParams();
+
+
 
     /**
      * ------------------------------------------------------------------------------------------------------------
@@ -178,6 +179,56 @@ export default props => {
             .then((res) => {
                 console.log("Messages response", res)
                 setLogs(Array.isArray(res.data) ? res.data : []);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Failed to load user data");
+                setLoading(false);
+            });
+    }, []);
+
+    /**
+     * ------------------------------ Completed Logs Section
+     * ------------------------------------------------------------------------------------------------------------
+     */
+
+    /**
+     * ------------------------------------------------------------------------------------------------------------
+     * ------------------------------Admin Side
+     * ------------------------------Logs section
+     */
+        const [benefeciaries, setBenefeciaries] = useState([])
+    useEffect(() => {
+        request("GET", "/api/benefeciaries")
+            .then((res) => {
+                console.log("Messages response", res)
+                setBenefeciaries(Array.isArray(res.data) ? res.data : []);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Failed to load user data");
+                setLoading(false);
+            });
+    }, []);
+
+    /**
+     * ------------------------------ Completed Logs Section
+     * ------------------------------------------------------------------------------------------------------------
+     */
+
+    /**
+     * ------------------------------------------------------------------------------------------------------------
+     * ------------------------------Admin Side
+     * ------------------------------Logs section
+     */
+    const [cities, setSitites] = useState([])
+    useEffect(() => {
+        request("GET", "/api/cities")
+            .then((res) => {
+                console.log("Messages response", res)
+                setSitites(Array.isArray(res.data) ? res.data : []);
                 setLoading(false);
             })
             .catch((err) => {
@@ -375,9 +426,9 @@ export default props => {
                         {messages.map(message => {
                             return (
                                 <div>
-                                    <span>{message.author}</span>
-                                    <span>{message.messageContent}</span>
-                                    <span>{message.messageDate}</span>
+                                    <span> - {message.author} - </span>
+                                    <span>{message.messageContent} - </span>
+                                    <span>{message.messageDate} - </span>
                                 </div>
                             )
                         })}
@@ -386,11 +437,31 @@ export default props => {
                         {logs.map(log => {
                             return (
                                 <div>
-                                    <span>{log.author}</span>
-                                    <span>{log.logText}</span>
-                                    <span>{log.logDateTime}</span>
-                                    <span>{log.userNick}</span>
-                                    <span>{log.projectId}</span>
+                                    <span> - {log.author} - </span>
+                                    <span>{log.logText} - </span>
+                                    <span>{log.logDateTime} - </span>
+                                    <span>{log.userNick} - </span>
+                                    <span>{log.projectId} - </span>
+                                </div>
+                            )
+                        })}
+                    </Tab>
+
+                     <Tab eventKey="Benefeciaries" title="Benefeciaries">
+                        {benefeciaries.map(benefeciar => {
+                            return (
+                                <div key={benefeciar.id}>
+                                    <span> - {benefeciar.benificiatyFirstName}  - </span>
+                                    <span>{benefeciar.companyName} - </span>
+                                </div>
+                            )
+                        })}
+                    </Tab>
+                    <Tab eventKey="cities" title="City">
+                        {cities.map(city => {
+                            return (
+                                <div key={city.id}>
+                                    <span>{city.city}</span>
                                 </div>
                             )
                         })}

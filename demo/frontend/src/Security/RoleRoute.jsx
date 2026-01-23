@@ -9,7 +9,6 @@ export default function RoleRoute({ allowedRoles }) {
     if (!user) {
         return <Navigate to="/login-register" replace />;
     }
-
     if (!user.role) {
         console.error("User has no role in JWT");
         return <Navigate to="/dashboard" replace />;

@@ -14,7 +14,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RefreshTokenService {
     private final RefreshTokenRepository repo;
-
     public RefreshToken create(CrmUser user) {
         RefreshToken rt = new RefreshToken();
         rt.setToken(UUID.randomUUID().toString());

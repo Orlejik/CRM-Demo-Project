@@ -14,7 +14,6 @@ export default function MyProjects(props) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     useEffect(() => {
             request("GET", "/api/my/projects")
                 .then((res) => {

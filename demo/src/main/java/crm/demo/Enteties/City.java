@@ -6,10 +6,7 @@ import lombok.*;
 
 import java.util.List;
 
-
-@Getter
 @Data
-@Setter
 @Entity
 @Table(name = "Cities")
 @AllArgsConstructor
@@ -18,7 +15,6 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-
     @Column
     String city;
 

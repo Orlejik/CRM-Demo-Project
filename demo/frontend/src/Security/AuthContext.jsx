@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
             return;
         }
-
         try {
             const decoded = jwtDecode(token);
 
