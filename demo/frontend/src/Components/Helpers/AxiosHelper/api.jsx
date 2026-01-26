@@ -1,14 +1,13 @@
 import axios from "axios";
 import { setServerDown } from "./ServerStatus";
 
-
 const api = axios.create({
     baseURL: "http://localhost:8080",
-    withCredentials: true,
-    timeout: 5000
+    timeout: 5000,
+    withCredentials: true
 });
 
-//REQUEST
+// REQUEST
 api.interceptors.request.use(config => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -17,32 +16,22 @@ api.interceptors.request.use(config => {
     return config;
 });
 
-
-
-//RESPONSE
+// RESPONSE
 api.interceptors.response.use(
-   response => response,
+    response => response,
     error => {
-        // сервер не отвечает вообще
+        // сервер не отвечает
         if (!error.response) {
             setServerDown();
         }
 
-        // backend явно сказал: я умер
+        // backend сказал: я умер
         if (error.response?.status === 503) {
             setServerDown();
         }
 
-        // 401 — это не падение сервера, не путай
-        if (error.response?.status === 401) {
-            localStorage.removeItem("token");
-        }
-
         return Promise.reject(error);
     }
-)
-
-
-
+);
 
 export default api;

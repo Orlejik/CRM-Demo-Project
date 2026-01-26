@@ -16,7 +16,25 @@ import {setupAxiosInterceptors} from "../Components/Helpers/AxiosHelper/AxiosInt
 import NotFound from "../Components/NotFoundComponent/NotFound";
 import UserDetails from "../Components/UserDetailsComponent/UserDetails";
 import ProjectByComponent from "../Components/ProjectByIDComponent/ProjectByComponent"
+import ServerDownModal from "../Components/GlobalModal/ServerDownModal";
+import TestRequest from "../Components/ZTESTBack/TestRequest";
+import api from "../Components/Helpers/AxiosHelper/Axios";
 function App() {
+
+    useEffect(()=>{
+        api.get("/actuator/health").catch(()=>{
+
+        });
+    }, [])
+
+    const callBackend = async()=>{
+        try{
+            await api.get("/actuator/health");
+        }catch(e){
+
+        }
+    }
+
     const {logout} = useAuth();
     useEffect(() => {
         setupAxiosInterceptors(logout);
@@ -24,6 +42,8 @@ function App() {
     return (
         <div className="App">
             <Header pageTitle="Front End Authentication with JWT"/>
+            <ServerDownModal />
+            {/* <TestRequest /> */}
             <div className="container-fluid">
                 <Routes>
                     <Route path="/login-register" element={<PublicOnly />}/>

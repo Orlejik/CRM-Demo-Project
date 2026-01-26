@@ -46,54 +46,6 @@ public class AuthController {
     ) {
         return ResponseEntity.ok(service.signUp(dto));
     }
-//    @Operation(summary = "User registration")
-//    @PostMapping("/register")
-//    public ResponseEntity<JwtAuthenticationResponse> signUp(@RequestBody @Valid SignUpDto request, HttpServletResponse response) {
-//        if (userRepo.existsByLogin(request.getLogin())) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Login already exists");
-//        }
-//
-//        if (userRepo.existsByEmailAddress(request.getEmail())) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-//        }
-//
-//        CrmUser user = CrmUser.builder()
-//                .firstName(request.getFirstName())
-//                .lastName(request.getLastName())
-//                .login(request.getLogin())
-//                .emailAddress(request.getEmail())
-//                .password(passwordEncoder.encode(request.getPassword()))
-//
-//                // 🔒 ЖЁСТКО ЗАДАЁМ СОСТОЯНИЕ
-//                .isActive(true)
-//                .isBlocked(false)
-//                .isAccountExpired(false)
-//
-//                .role(RoleEnum.USER)
-//                .build();
-//
-//        userRepo.save(user);
-//
-//        String accessToken = jwtService.generateAccessToken(user);
-//        RefreshToken refreshToken = refreshTokenService.create(user);
-//
-//        Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
-//        cookie.setHttpOnly(true);
-//        cookie.setSecure(false); // true в prod
-//        cookie.setPath("/auth/refresh");
-//        cookie.setMaxAge(7 * 24 * 60 * 60);
-//        response.addCookie(cookie);
-//
-//        return ResponseEntity.ok(
-//                JwtAuthenticationResponse.builder()
-//                        .token(accessToken)
-//                        .build()
-//        );
-//
-//    }
-
-
-
     @Operation(summary = "User login")
     @PostMapping("/login")
     public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody @Valid SignInDto request, HttpServletResponse response) {
